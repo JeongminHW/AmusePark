@@ -7,20 +7,27 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import cmp.DB.DBMgr;
+import cmp.DB.EmployeeBean;
+import cmp.GUI.*;
 
 public class EmLogin {
 	DBMgr db = new DBMgr();
+	EmployeeBean bean = new EmployeeBean();
 
     public EmLogin() {
         JFrame frame = new JFrame("직원 로그인/회원가입");
@@ -33,20 +40,13 @@ public class EmLogin {
 
         JPanel btnPanel = new JPanel();
         btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.X_AXIS));
-
-        ImageIcon icon = new ImageIcon("src/image/TestImage.jpg"); // 이미지 경로를 입력
-        Image img = icon.getImage();
-        Image scaledImg = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-        ImageIcon scaledIcon = new ImageIcon(scaledImg);
-        JLabel imageLabel = new JLabel(scaledIcon);
-        imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
+        
+        JTextField idField = new JTextField();
+        JPasswordField PwField = new JPasswordField();
+        
         // RoundedButton 클래스 사용
         JButton loginBtn = new RoundedButton("로그인", 32);
         JButton signupBtn = new RoundedButton("회원가입", 32);
-        
-        JTextField idField = new JTextField("ID");
-        JPasswordField PwField = new JPasswordField();
 
         loginBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         loginBtn.setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -59,22 +59,7 @@ public class EmLogin {
         loginBtn.setContentAreaFilled(false);
         loginBtn.setBorderPainted(false);
         loginBtn.setFocusPainted(false);
-        loginBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e){
-            	String id = idField.getText();
-            	String pw = new String(PwField.getPassword());
-            	if(db.EmployeeLoginCheck(id, pw)) {
-            		System.out.println(pw);
-            		System.out.println("로그인 성공");
-            		new MainUI();
-                    frame.dispose();
-            	}
-            	else {
-            		System.out.println("로그인 실패");
-            	}
-            }
-        });
+        
         signupBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         signupBtn.setAlignmentY(Component.CENTER_ALIGNMENT);
         signupBtn.setFont(new Font("돋움", Font.PLAIN,20));
@@ -84,6 +69,28 @@ public class EmLogin {
         signupBtn.setContentAreaFilled(false);
         signupBtn.setBorderPainted(false);
         signupBtn.setFocusPainted(false);
+        
+        
+        // 이벤트
+        loginBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+            	String id = idField.getText();
+            	String pw = new String(PwField.getPassword());
+            	if(db.EmployeeLoginCheck(id, pw)) {
+            		System.out.println("로그인 성공");
+            		MainUI mainUI = new MainUI();
+					mainUI.setId(id);
+					new MainUI();
+                    frame.dispose();
+            	}
+            	else {
+            		JOptionPane.showMessageDialog(null, "아이디/비밀번호를 다시 입력해주세요.", null, JOptionPane.ERROR_MESSAGE);
+            		System.out.println("로그인 실패");
+            	}
+            }
+        });
+
         signupBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
@@ -92,8 +99,6 @@ public class EmLogin {
                 frame.dispose();
             }
         });
-       
-
 
         loginBtn.setMaximumSize(new Dimension(200,40));
         signupBtn.setMaximumSize(new Dimension(200,40));
@@ -101,13 +106,11 @@ public class EmLogin {
         PwField.setMaximumSize(new Dimension(200,40));
 
         
-        mainPanel.add(Box.createVerticalStrut(50)); // 상단 여백
-        mainPanel.add(imageLabel);
-        mainPanel.add(Box.createVerticalStrut(40)); // 이미지와 ID 사이의 간격
+        mainPanel.add(Box.createVerticalStrut(100)); // 상단 여백
         mainPanel.add(idField);
         mainPanel.add(Box.createVerticalStrut(10)); // ID와 PW 사이의 간격
         mainPanel.add(PwField);
-        mainPanel.add(Box.createVerticalStrut(100)); // 이미지와 버튼 사이의 간격
+        mainPanel.add(Box.createVerticalStrut(200)); // 이미지와 버튼 사이의 간격
         mainPanel.add(loginBtn);
         mainPanel.add(Box.createVerticalStrut(20)); // 버튼 간의 간격
         mainPanel.add(signupBtn);

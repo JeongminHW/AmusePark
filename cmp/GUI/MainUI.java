@@ -1,14 +1,29 @@
 package cmp.GUI;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
-public class MainUI {
+public class MainUI{
+	// 로그인한 아이디 받아오기
+	static String id;
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+	
 	
 	public MainUI() {
         JFrame frame = new JFrame("Main UI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
+        frame.setTitle("Main UI - " + getId());
         
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout(10, 10));
@@ -27,7 +42,7 @@ public class MainUI {
         frame.setVisible(true);
 	}
     
-    private static JPanel createCalendarPanel() {
+    public JPanel createCalendarPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         JLabel monthLabel = new JLabel("8월", SwingConstants.CENTER);
         JButton prevButton = new JButton("<");
@@ -55,7 +70,7 @@ public class MainUI {
         return panel;
     }
     
-    private static JPanel createTodoPanel() {
+    public JPanel createTodoPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         JLabel label = new JLabel("오늘 할 일");
         JTextArea todoArea = new JTextArea("A\nB\nC\nD");
@@ -65,7 +80,7 @@ public class MainUI {
         return panel;
     }
     
-    private static JPanel createChatPanel() {
+    public JPanel createChatPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         JLabel label = new JLabel("채팅");
         JTextArea chatArea = new JTextArea("홍길동: AAAAA");
@@ -75,19 +90,53 @@ public class MainUI {
         return panel;
     }
     
-    private static JPanel createMenuPanel() {
+    public JPanel createMenuPanel() {
         JPanel panel = new JPanel(new GridLayout(2, 4, 10, 10));
         String[] buttons = {"휴가", "일정", "마이페이지", "문의 사항", "파일 공유", "물품 관리", "사용자 집계", "할 일"};
         for (String button : buttons) {
             JButton menuButton = new JButton(button);
-            menuButton.setBackground(Color.GREEN); // Example color, adjust as needed
+            menuButton.setBackground(Color.GREEN);
+            menuButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String btnText = menuButton.getText();
+					if(btnText.equals("휴가")) {
+						
+					}
+					else if(btnText.equals("일정")) {
+						
+					}
+					else if(btnText.equals("마이페이지")) {
+						MyPage mypage = new MyPage();
+						mypage.setId(id);
+						new MyPage();
+					}
+					else if(btnText.equals("문의 사항")) {
+						
+					}
+					else if(btnText.equals("파일 공유")) {
+						
+					}
+					else if(btnText.equals("물품 관리")) {
+						
+					}
+					else if(btnText.equals("사용자 집계")) {
+						
+					}
+					else if(btnText.equals("할 일")) {
+						
+					}
+				}
+			});
             panel.add(menuButton);
         }
+        
         return panel;
     }
     
 
     public static void main(String[] args) {
-        new MainUI();
+    	new MainUI();
     }
+
 }

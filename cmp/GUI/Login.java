@@ -35,7 +35,7 @@ public class Login extends JFrame implements ActionListener {
         employButton.setAlignmentY(Component.CENTER_ALIGNMENT);
         employButton.setHorizontalAlignment(JButton.CENTER);
         employButton.setVerticalAlignment(JButton.CENTER);
-        employButton.setFont(new Font("돋움", Font.PLAIN, 20));
+        employButton.setFont(new Font("돋움", Font.BOLD, 20));
         employButton.setForeground(Color.WHITE);
         employButton.setBackground(Color.BLACK);
         employButton.setOpaque(true);
@@ -52,9 +52,11 @@ public class Login extends JFrame implements ActionListener {
         });
         partTimeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         partTimeButton.setAlignmentY(Component.CENTER_ALIGNMENT);
-        partTimeButton.setFont(new Font("돋움", Font.PLAIN,20));
-        partTimeButton.setForeground(Color.WHITE);
-        partTimeButton.setBackground(Color.BLACK);
+        partTimeButton.setHorizontalAlignment(JButton.CENTER);
+        partTimeButton.setVerticalAlignment(JButton.CENTER);
+        partTimeButton.setFont(new Font("돋움", Font.BOLD,20));
+        partTimeButton.setForeground(Color.white);
+        partTimeButton.setBackground(Color.black);
         partTimeButton.setOpaque(true);
         partTimeButton.setContentAreaFilled(false);
         partTimeButton.setBorderPainted(false);
@@ -75,7 +77,8 @@ public class Login extends JFrame implements ActionListener {
         employButton.setMaximumSize(new Dimension(200,40));
         partTimeButton.setMaximumSize(new Dimension(200,40));
 
-        mainPanel.add(Box.createVerticalStrut(50)); // 상단 여백
+        mainPanel.add(new JLabel(new ImageIcon("https://www.everland.com/static/img/Logo_Everland_Resort_white.a7ddb426.png")));
+        mainPanel.add(Box.createVerticalStrut(100)); // 상단 여백
         mainPanel.add(Box.createVerticalStrut(100)); // 이미지와 버튼 사이의 간격
         mainPanel.add(employButton);
         mainPanel.add(Box.createVerticalStrut(20)); // 버튼 간의 간격

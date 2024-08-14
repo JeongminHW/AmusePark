@@ -23,7 +23,7 @@ public class DBMgr {
 	}
 	
 	// 직원 로그인
-	public boolean EmployeeLoginCheck(String id, String pw) {
+	public boolean LoginCheckEmployee(String id, String pw) {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
@@ -51,7 +51,7 @@ public class DBMgr {
 	}
 	
 	//직원 회원가입
-	public void signupEmployee(EmployeeBean bean) {
+	public void SignUpEmployee(EmployeeBean bean) {
 		try {
 			con = pool.getConnection();
 			sql = "insert into employee(em_id, em_pw, em_name, em_birthday, em_phone, em_position, em_department) values (?,?,?,?,?,?,?);";
@@ -64,13 +64,35 @@ public class DBMgr {
 			pstmt.setString(6, bean.getPosition());
 			pstmt.setString(7, bean.getDepartment());
 			pstmt.executeUpdate();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			pool.freeConnection(con, pstmt, rs); //con는 반납, pstmt/rs는 close
 		}
 	}
+
+	// 직원 회원가입 아이디 중복 확인
+	public boolean IdCheckEmployee(String id) {
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "select em_id from employee where em_id = ?;";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				if(rs.getString("em_id").equals(id)) {
+					return true;
+				}
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return flag;
+	}
+	
 	
 	// 관리자 부여
 	public boolean ManagerEmployee(String id) {
@@ -88,6 +110,7 @@ public class DBMgr {
 		}
 		return flag;
 	}
+	
 	
 	// 직원 직급에 따른 휴가 일수 부여
 	public boolean VacationEmployee(EmployeeBean bean) {
@@ -132,10 +155,11 @@ public class DBMgr {
 	}
 	
 	// 알바 로그인
-	public boolean AlbaLoginCheck(String id, String pw) {
+	public boolean LoginCheckAlba(String id, String pw) {
 		boolean flag = false;
 		try {
-			sql = "select alba_pw from employee where alba_id = ? and alba_pw = ?";
+			con = pool.getConnection();
+			sql = "select alba_pw from alba where alba_id = ? and alba_pw = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, id);
 			pstmt.setString(2, pw);
@@ -156,6 +180,48 @@ public class DBMgr {
 		return flag;
 	}
 	
+	// 알바 회원가입
+	public void SignUpAlba(AlbaBean bean) {
+		try {
+			con = pool.getConnection();
+			sql = "insert into employee(alba_id, alba_pw, alba_name, alba_birthday, alba_phone, parttime) values (?,?,?,?,?,?);";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bean.getid());
+			pstmt.setString(2, bean.getpw());
+			pstmt.setString(3, bean.getname());
+			pstmt.setString(4, bean.getbirthday());
+			pstmt.setString(5, bean.getphone());
+			pstmt.setString(6, bean.getPart_time());
+			pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); //con는 반납, pstmt/rs는 close
+		}
+	}
+	
+	// 알바 회원가입 아이디 중복 확인
+		public boolean IdCheckAlba(String id) {
+			boolean flag = false;
+			try {
+				con = pool.getConnection();
+				sql = "select alba_id from alba where alba_id = ?;";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				while(rs.next()) {
+					if(rs.getString("alba_id").equals(id)) {
+						flag = true;
+					}
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return flag;
+		}
+		
 	// 마이페이지 수정
 	public boolean updateEmployee(EmployeeBean bean) {
 		boolean flag = false;

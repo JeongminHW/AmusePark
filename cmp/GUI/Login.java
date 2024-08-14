@@ -2,12 +2,15 @@ package cmp.GUI;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -16,7 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Login extends JFrame implements ActionListener {
+public class Login extends JFrame{
 
     public Login() throws HeadlessException {
         JFrame frame = new JFrame("직원/알바 선택");
@@ -27,6 +30,13 @@ public class Login extends JFrame implements ActionListener {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.WHITE);
 
+        ImageIcon icon = new ImageIcon("src/image/TestImage.jpg"); // 이미지 경로를 입력
+        Image img = icon.getImage();
+        Image scaledImg = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+        JLabel imageLabel = new JLabel(scaledIcon);
+        imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         // RoundedButton 클래스 사용
         JButton employButton = new RoundedButton("직원", 32);
         JButton partTimeButton = new RoundedButton("아르바이트", 32);
@@ -35,7 +45,7 @@ public class Login extends JFrame implements ActionListener {
         employButton.setAlignmentY(Component.CENTER_ALIGNMENT);
         employButton.setHorizontalAlignment(JButton.CENTER);
         employButton.setVerticalAlignment(JButton.CENTER);
-        employButton.setFont(new Font("돋움", Font.BOLD, 20));
+        employButton.setFont(new Font("돋움", Font.PLAIN, 20));
         employButton.setForeground(Color.WHITE);
         employButton.setBackground(Color.BLACK);
         employButton.setOpaque(true);
@@ -46,17 +56,16 @@ public class Login extends JFrame implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e){
                 new EmLogin();
-                //System.out.println("Employee");
                 frame.dispose();
             }
         });
+
+        
         partTimeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         partTimeButton.setAlignmentY(Component.CENTER_ALIGNMENT);
-        partTimeButton.setHorizontalAlignment(JButton.CENTER);
-        partTimeButton.setVerticalAlignment(JButton.CENTER);
-        partTimeButton.setFont(new Font("돋움", Font.BOLD,20));
-        partTimeButton.setForeground(Color.white);
-        partTimeButton.setBackground(Color.black);
+        partTimeButton.setFont(new Font("돋움", Font.PLAIN,20));
+        partTimeButton.setForeground(Color.WHITE);
+        partTimeButton.setBackground(Color.BLACK);
         partTimeButton.setOpaque(true);
         partTimeButton.setContentAreaFilled(false);
         partTimeButton.setBorderPainted(false);
@@ -65,7 +74,6 @@ public class Login extends JFrame implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e){
                 new PTLogin();
-                //System.out.println("PartTime");
                 frame.dispose();
             }
         });
@@ -77,8 +85,8 @@ public class Login extends JFrame implements ActionListener {
         employButton.setMaximumSize(new Dimension(200,40));
         partTimeButton.setMaximumSize(new Dimension(200,40));
 
-        mainPanel.add(new JLabel(new ImageIcon("https://www.everland.com/static/img/Logo_Everland_Resort_white.a7ddb426.png")));
-        mainPanel.add(Box.createVerticalStrut(100)); // 상단 여백
+        mainPanel.add(Box.createVerticalStrut(50)); // 상단 여백
+        mainPanel.add(imageLabel);
         mainPanel.add(Box.createVerticalStrut(100)); // 이미지와 버튼 사이의 간격
         mainPanel.add(employButton);
         mainPanel.add(Box.createVerticalStrut(20)); // 버튼 간의 간격
@@ -93,8 +101,4 @@ public class Login extends JFrame implements ActionListener {
     public static void main(String[] args) {
         new Login();
     }
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	}
 }

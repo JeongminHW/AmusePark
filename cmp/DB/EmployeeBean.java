@@ -1,4 +1,4 @@
-package cmp.DB;
+package DB;
 
 public class EmployeeBean {
 	private String id;
@@ -8,7 +8,7 @@ public class EmployeeBean {
 	private String phone;
 	private String position;
 	private String department;
-	private int manage;
+	private String manage;
 	private int usable_vacation;
 	
 	public String getId() {
@@ -60,10 +60,10 @@ public class EmployeeBean {
 		this.department = department;
 	}
 	
-	public int getManage() {
+	public String getManage() {
 		return manage;
 	}
-	public void setManage(int manage) {
+	public void setManage(String manage) {
 		this.manage = manage;
 	}
 	

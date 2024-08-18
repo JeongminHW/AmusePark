@@ -1,11 +1,22 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class RoundedButton extends JButton{
     int setRad;
+    public RoundedButton(ImageIcon leftIcon, int setRad) {
+        super(leftIcon);
+        this.setRad = setRad;
+        setOpaque(false);
+        setContentAreaFilled(false);
+        setBorderPainted(false);
+        setFocusPainted(false);
+    }
+    
     public RoundedButton(String label, int setRad) {
         super(label);
         this.setRad = setRad;

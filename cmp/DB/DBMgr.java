@@ -1,27 +1,28 @@
-package cmp.DB;
+package DB;
 
 import java.sql.*;
-import cmp.DB.DBConnectionMgr;
+import java.util.*;
 
+import DB.DBConnectionMgr;
 
 public class DBMgr {
 	private DBConnectionMgr pool;
-	
+
 	Connection con = null;
 	Statement stmt = null;
 	PreparedStatement pstmt = null;
 	ResultSet rs = null;
 	String sql = null;
-	
+
 	public DBMgr() {
 		try {
 			pool = DBConnectionMgr.getInstance();
 			System.out.println("연결 성공");
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		} 
 	}
-	
+
 	// 직원 로그인
 	public boolean LoginCheckEmployee(String id, String pw) {
 		boolean flag = false;
@@ -32,25 +33,24 @@ public class DBMgr {
 			pstmt.setString(1, id);
 			pstmt.setString(2, pw);
 			rs = pstmt.executeQuery();
-			while(rs.next()) {
-				if(pw.equals(rs.getString("em_pw"))) {
+			while (rs.next()) {
+				if (pw.equals(rs.getString("em_pw"))) {
 					flag = true;
-				}
-				else {
+				} else {
 					flag = false;
 				}
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			pool.freeConnection(con, pstmt, rs); //con는 반납, pstmt/rs는 close
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
 		}
-		
+
 		return flag;
 	}
-	
-	//직원 회원가입
+
+	// 직원 회원가입
 	public void SignUpEmployee(EmployeeBean bean) {
 		try {
 			con = pool.getConnection();
@@ -68,7 +68,7 @@ public class DBMgr {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			pool.freeConnection(con, pstmt, rs); //con는 반납, pstmt/rs는 close
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
 		}
 	}
 
@@ -81,37 +81,59 @@ public class DBMgr {
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
-			while(rs.next()) {
-				if(rs.getString("em_id").equals(id)) {
+			while (rs.next()) {
+				if (rs.getString("em_id").equals(id)) {
 					return true;
 				}
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
 		}
 		return flag;
 	}
-	
-	
+
 	// 관리자 부여
 	public boolean ManagerEmployee(String id) {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "update employee set em_manage = '관리자' where id = ?";
+			sql = "update employee set em_manage = '관리자' where em_id = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, id);
 			pstmt.executeUpdate();
-			if(pstmt.executeUpdate() == 1)
+			if (pstmt.executeUpdate() == 1)
 				flag = true;
 		} catch (Exception e) {
-			
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
 		}
 		return flag;
 	}
-	
-	
+
+	// 관리자 해제
+	public boolean NonManagerEmployee(String id) {
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "update employee set em_manage = '' where em_id = ?;";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			pstmt.executeUpdate();
+			if (pstmt.executeUpdate() == 1) {
+				flag = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
+		}
+		return flag;
+	}
+
 	// 직원 직급에 따른 휴가 일수 부여
 	public boolean VacationEmployee(EmployeeBean bean) {
 		boolean flag = false;
@@ -119,41 +141,37 @@ public class DBMgr {
 			con = pool.getConnection();
 			sql = "update employee set em_manage = ?, usable_vacation = ? where em_position = ?;";
 			pstmt = con.prepareStatement(sql);
-			if(bean.getPosition().equals("사원")) {
+			if (bean.getPosition().equals("사원")) {
 				pstmt.setString(1, null);
 				pstmt.setInt(2, 15);
 				pstmt.setString(3, bean.getPosition());
-			}
-			else if(bean.getPosition().equals("대리")) {
+			} else if (bean.getPosition().equals("대리")) {
 				pstmt.setString(1, null);
 				pstmt.setInt(2, 18);
 				pstmt.setString(3, bean.getPosition());
-			}
-			else if(bean.getPosition().equals("과장")) {
+			} else if (bean.getPosition().equals("과장")) {
 				pstmt.setString(1, null);
 				pstmt.setInt(2, 20);
 				pstmt.setString(3, bean.getPosition());
-			}
-			else if(bean.getPosition().equals("차장")) {
+			} else if (bean.getPosition().equals("차장")) {
 				pstmt.setString(1, null);
 				pstmt.setInt(2, 23);
 				pstmt.setString(3, bean.getPosition());
-			}
-			else if(bean.getPosition().equals("부장")) {
+			} else if (bean.getPosition().equals("부장")) {
 				pstmt.setString(1, "관리자");
 				pstmt.setInt(2, 25);
 				pstmt.setString(3, bean.getPosition());
 			}
-			if(pstmt.executeUpdate() == 1)
+			if (pstmt.executeUpdate() == 1)
 				flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			pool.freeConnection(con, pstmt, rs); //con는 반납, pstmt/rs는 close
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
 		}
 		return flag;
 	}
-	
+
 	// 알바 로그인
 	public boolean LoginCheckAlba(String id, String pw) {
 		boolean flag = false;
@@ -164,22 +182,21 @@ public class DBMgr {
 			pstmt.setString(1, id);
 			pstmt.setString(2, pw);
 			rs = pstmt.executeQuery();
-			while(rs.next()) {
-				if(pw.equals(rs.getString("alba_pw"))) {
+			while (rs.next()) {
+				if (pw.equals(rs.getString("alba_pw"))) {
 					flag = true;
-				}
-				else {
+				} else {
 					flag = false;
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			pool.freeConnection(con, pstmt, rs); //con는 반납, pstmt/rs는 close
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
 		}
 		return flag;
 	}
-	
+
 	// 알바 회원가입
 	public void SignUpAlba(AlbaBean bean) {
 		try {
@@ -193,54 +210,80 @@ public class DBMgr {
 			pstmt.setString(5, bean.getphone());
 			pstmt.setString(6, bean.getPart_time());
 			pstmt.executeUpdate();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			pool.freeConnection(con, pstmt, rs); //con는 반납, pstmt/rs는 close
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
 		}
 	}
-	
+
 	// 알바 회원가입 아이디 중복 확인
-		public boolean IdCheckAlba(String id) {
-			boolean flag = false;
-			try {
-				con = pool.getConnection();
-				sql = "select alba_id from alba where alba_id = ?;";
-				pstmt = con.prepareStatement(sql);
-				pstmt.setString(1, id);
-				rs = pstmt.executeQuery();
-				while(rs.next()) {
-					if(rs.getString("alba_id").equals(id)) {
-						flag = true;
-					}
+	public boolean IdCheckAlba(String id) {
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "select alba_id from alba where alba_id = ?;";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				if (rs.getString("alba_id").equals(id)) {
+					flag = true;
 				}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
-			return flag;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
 		}
-		
+		return flag;
+	}
+	
+	
+	// 마이페이지 정보 불러오기
+	public EmployeeBean listEmployee(String id){
+		EmployeeBean bean = new EmployeeBean();
+		try {
+			con = pool.getConnection();
+			sql = "select em_name, em_phone, em_position from employee where em_id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				bean.setName(rs.getString(1));
+				bean.setPhone(rs.getString(2));
+				bean.setPosition(rs.getString(3));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
+		}
+		return bean;
+	}
+	
+
 	// 마이페이지 수정
 	public boolean updateEmployee(EmployeeBean bean) {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "update employee set em_pw = ?, em_name = ?, em_phone = ? where id = ?";
+			sql = "update employee set em_pw = ?, em_name = ?, em_phone = ?, em_position = ? where id = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, bean.getPw());
 			pstmt.setString(2, bean.getName());
 			pstmt.setString(3, bean.getPhone());
-			pstmt.setString(4, "관리자");
+			pstmt.setString(4, bean.getPosition());
 			pstmt.setString(5, bean.getId());
 			pstmt.executeUpdate();
-			if(pstmt.executeUpdate() == 1) 
+			if (pstmt.executeUpdate() == 1)
 				flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			pool.freeConnection(con, pstmt, rs); //con는 반납, pstmt/rs는 close
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
 		}
 		return flag;
 	}

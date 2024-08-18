@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,7 +10,7 @@ import java.awt.event.MouseListener;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import cmp.DB.*;
+import DB.*;
 
 public class PTSignUp implements ActionListener, MouseListener {
 	DBMgr db = new DBMgr();

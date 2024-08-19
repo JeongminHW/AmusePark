@@ -108,7 +108,7 @@ public class MainUI{
 					}
 					else if(btnText.equals("마이페이지")) {
 						MyPage mypage = new MyPage();
-						mypage.setId(id);
+						mypage.setEm_id(id);
 						new MyPage();
 					}
 					else if(btnText.equals("문의 사항")) {

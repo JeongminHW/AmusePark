@@ -1,6 +1,9 @@
-package GUI;
+package cmp.GUI;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
 public class AlbaMain {
@@ -14,10 +17,12 @@ public class AlbaMain {
 		this.id = id;
 	}
 	
+	JFrame frame = new JFrame("알바 메인화면");
+	
 	public AlbaMain() {
-		JFrame frame = new JFrame("Main UI 2");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
+        frame.setTitle("알바 메인화면 - " + getId());
         
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout(10, 10));
@@ -34,6 +39,10 @@ public class AlbaMain {
         
         frame.add(panel);
         frame.setVisible(true);
+        
+        if(frame.getTitle().equals("알바 메인화면 - null")) {
+			frame.setVisible(false);
+		}
 	}
     
     private static JPanel createCalendarPanel() {
@@ -96,11 +105,36 @@ public class AlbaMain {
         JPanel panel = new JPanel(new GridLayout(6, 1, 10, 10));
         String[] buttons = {"할 일", "마이페이지", "일정", "출근/퇴근", "로그아웃"};
         for (String button : buttons) {
-            JButton menuButton = new JButton(button);
-            menuButton.setBackground(Color.GREEN); // Example color, adjust as needed
-            panel.add(menuButton);
-        }
-        return panel;
+			JButton menuButton = new JButton(button);
+			menuButton.setBackground(Color.GREEN);
+			menuButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String btnText = menuButton.getText();
+					if (btnText.equals("휴가")) {
+
+					} else if (btnText.equals("일정")) {
+
+					} else if (btnText.equals("마이페이지")) {
+						MyPage mypage = new MyPage();
+						mypage.setAlba_id(id);
+						new MyPage();
+					} else if (btnText.equals("문의 사항")) {
+						new InquiryForm(id);
+					} else if (btnText.equals("파일 공유")) {
+
+					} else if (btnText.equals("물품 관리")) {
+
+					} else if (btnText.equals("사용자 집계")) {
+
+					} else if (btnText.equals("할 일")) {
+						ToDoList todolist = new ToDoList(id);
+					}
+				}
+			});
+			panel.add(menuButton);
+		}
+		return panel;
     }
     
 

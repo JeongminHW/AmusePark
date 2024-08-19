@@ -1,31 +1,44 @@
-package GUI;
+package cmp.GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Vector;
 
 import javax.swing.*;
 
 import org.xnio.channels.SslChannel;
 
-import DB.*;
+import cmp.DB.*;
 
 public class MyPage implements ActionListener {
-	static String id = null;
+	static String em_id = "";
+	static String alba_id = "";
 
-	public String getId() {
-		return id;
+	public static String getEm_id() {
+		return em_id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public static void setEm_id(String em_id) {
+		MyPage.em_id = em_id;
+	}
+
+	public static String getAlba_id() {
+		return alba_id;
+	}
+
+	public static void setAlba_id(String alba_id) {
+		MyPage.alba_id = alba_id;
 	}
 
 	DBMgr db = new DBMgr();
-	EmployeeBean bean = new EmployeeBean();
+	EmployeeBean Embean = new EmployeeBean();
+	AlbaBean Albabean = new AlbaBean();
+	Vector<EmployeeBean> vlist;
 
+	JFrame frame = new JFrame("마이페이지");
 	JPanel mainPanel = new JPanel(new GridLayout(10, 2, 10, 10));
 	JLabel idLabel = new JLabel("ID");
 	JLabel nameLabel = new JLabel("이름");
@@ -36,7 +49,7 @@ public class MyPage implements ActionListener {
 	JLabel positionLabel = new JLabel("직급");
 	JLabel adminLabel = new JLabel("관리자 여부");
 
-	JTextField idField = new JTextField(getId());
+	JTextField idField = new JTextField();
 	JTextField nameField = new JTextField("");
 	JPasswordField currentPasswordField = new JPasswordField("");
 	JPasswordField newPasswordField = new JPasswordField("");
@@ -48,15 +61,32 @@ public class MyPage implements ActionListener {
 	JButton cancelButton = new RoundedButton("취소", 20);
 
 	public MyPage() {
-		JFrame frame = new JFrame("마이페이지");
-		frame.setTitle("마이페이지 - " + getId());
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(500, 400);
-		System.out.println(getId());
+		if (!alba_id.equals("")) { // 알바 마이페이지
+			frame.setTitle("마이페이지 - " + alba_id);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setSize(500, 400);
+			// System.out.println(getAlba_id() +"\n" + getEm_id());
 
+			// 정보 불러오기
+			loadAlba(alba_id);
+			Form(alba_id);
+			positionLabel.setText("파트타임");
+		} 
+		else if (!em_id.equals("")) { // 직원 마이페이지
+			frame.setTitle("마이페이지 - " + getEm_id());
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setSize(500, 400);
+			System.out.println(getAlba_id() + "\n" + getEm_id());
+			Form(em_id);
+		}
+
+	}
+
+	public void Form(String id) {
+		idField.setText(id);
 		idField.setEnabled(false);
 		idField.setForeground(Color.black);
-		//positionField.setEnabled(false);
+		// positionField.setEnabled(false);
 
 		adminCheckBox.setBackground(Color.white);
 
@@ -66,16 +96,13 @@ public class MyPage implements ActionListener {
 		cancelButton.addActionListener(this);
 
 		mainPanel.setBackground(Color.white);
-		db.listEmployee("asdf123");
-		nameField.setText(bean.getName());
-		phoneField.setText(bean.getPhone());
-		positionField.setText(bean.getPosition());
-//		if(bean.getManage().equals("관리자")) {
-//			adminCheckBox.setSelected(true);
-//		}
-//		else {
-//			adminCheckBox.setSelected(false);
-//		}
+
+		// 매니저 여부 체크
+		if (db.CheckManagerEmployee(id)) {
+			adminCheckBox.setSelected(true);
+		} else {
+			adminCheckBox.setSelected(false);
+		}
 
 		mainPanel.add(idLabel);
 		mainPanel.add(idField);
@@ -98,10 +125,26 @@ public class MyPage implements ActionListener {
 
 		frame.add(mainPanel);
 		frame.setVisible(true);
+
+		/*
+		 * if(frame.getTitle().equals("마이페이지 - ")) { frame.dispose(); }
+		 */
 	}
 
-	public static void main(String[] args) {
-		new MyPage();
+	// 직원 정보 불러오기
+	private void loadEmployeeInfo(String id) {
+		Embean = db.listEmployee(id);
+		nameField.setText(Embean.getName());
+		phoneField.setText(Embean.getPhone());
+		positionField.setText(Embean.getPosition());
+	}
+
+	// 알바 정보 불러오기
+	private void loadAlba(String id) {
+		Albabean = db.listAlba(id);
+		nameField.setText(Albabean.getname());
+		phoneField.setText(Albabean.getphone());
+		positionField.setText(Albabean.getPart_time());
 	}
 
 	@Override
@@ -114,21 +157,49 @@ public class MyPage implements ActionListener {
 		String phone = phoneField.getText();
 		String position = positionField.getText();
 		boolean managerChk = adminCheckBox.isSelected();
-		if(obj == saveButton) {
-			if(!newpw.equals("") && !pwChk.equals("") && !name.equals("") && !phone.equals("") && !position.equals("")) {
-				if(newpw.equals(pwChk)) {
-					bean.setPw(pwChk);
-					bean.setName(name);
-					bean.setPhone(phone);
-					bean.setPosition(position);
-					db.ManagerEmployee("asdf123");
-					db.updateEmployee(bean);
+		if (obj == saveButton) {
+			if (!oldpw.equals("") && !newpw.equals("") && !pwChk.equals("") && positionLabel.getText().equals("직급")) {
+				if (newpw.equals(pwChk)) {
+					Embean.setPw(pwChk);
+					Embean.setName(name);
+					Embean.setPhone(phone);
+					Embean.setPosition(position);
+					db.updateEmployee(Embean);
 					JOptionPane.showMessageDialog(null, "수정이 완료되었습니다.", "수정", JOptionPane.PLAIN_MESSAGE);
-				}
-				else {
+					frame.dispose();
+				} else {
 					JOptionPane.showMessageDialog(null, "비밀번호가 다릅니다.", "수정", JOptionPane.ERROR_MESSAGE);
 				}
 			}
+			else if(!oldpw.equals("") && !newpw.equals("") && !pwChk.equals("") && positionLabel.getText().equals("파트타임")) {
+				if (newpw.equals(pwChk)) {
+					Albabean.setpw(pwChk);
+					Albabean.setname(name);
+					Albabean.setphone(phone);
+					Albabean.setPart_time(position);
+					db.updateAlba(Albabean);
+					JOptionPane.showMessageDialog(null, "수정이 완료되었습니다.", "수정", JOptionPane.PLAIN_MESSAGE);
+					frame.dispose();
+				} else {
+					JOptionPane.showMessageDialog(null, "비밀번호가 다릅니다.", "수정", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+
+			if (managerChk == true) {
+				db.ManagerEmployee(em_id);
+				JOptionPane.showMessageDialog(null, "수정이 완료되었습니다.", "수정", JOptionPane.PLAIN_MESSAGE);
+				frame.dispose();
+			} else {
+				db.NonManagerEmployee(em_id);
+				JOptionPane.showMessageDialog(null, "수정이 완료되었습니다.", "수정", JOptionPane.PLAIN_MESSAGE);
+				frame.dispose();
+			}
+		} else if (obj == cancelButton) {
+			frame.dispose();
 		}
+	}
+
+	public static void main(String[] args) {
+		new MyPage();
 	}
 }

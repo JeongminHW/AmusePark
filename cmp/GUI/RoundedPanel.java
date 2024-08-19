@@ -1,4 +1,4 @@
-package GUI;
+package cmp.GUI;
 
 import java.awt.*;
 import javax.swing.*;
@@ -25,9 +25,5 @@ public class RoundedPanel extends JPanel {
         // 둥근 모서리를 가진 사각형 그리기
         g2.setColor(getBackground());
         g2.fillRoundRect(0, 0, width, height, radius, radius);
-
-        // 필요 시 테두리 추가
-        //g2.setColor(getForeground());
-        //g2.drawRoundRect(0, 0, width - 1, height - 1, radius, radius);
     }
 }

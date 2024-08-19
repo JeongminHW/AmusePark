@@ -1,4 +1,4 @@
-package GUI;
+package cmp.GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,7 +10,7 @@ import java.awt.event.MouseListener;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import DB.*;
+import cmp.DB.*;
 
 public class PTSignUp implements ActionListener, MouseListener {
 	DBMgr db = new DBMgr();
@@ -200,7 +200,7 @@ public class PTSignUp implements ActionListener, MouseListener {
 					bean.setPart_time(part);
 					db.SignUpAlba(bean);
 					JOptionPane.showMessageDialog(null, "회원가입에 성공하였습니다.", "회원가입 성공", JOptionPane.PLAIN_MESSAGE);
-					new EmLogin();
+					new PTLogin();
 					frame.dispose();
 				} else {
 					JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.", "비밀번호 오류", JOptionPane.ERROR_MESSAGE);

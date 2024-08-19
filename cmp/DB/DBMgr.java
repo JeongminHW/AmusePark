@@ -1,9 +1,9 @@
-package DB;
+package cmp.DB;
 
 import java.sql.*;
 import java.util.*;
 
-import DB.DBConnectionMgr;
+import cmp.DB.DBConnectionMgr;
 
 public class DBMgr {
 	private DBConnectionMgr pool;
@@ -20,7 +20,7 @@ public class DBMgr {
 			System.out.println("연결 성공");
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
 	}
 
 	// 직원 로그인
@@ -87,6 +87,30 @@ public class DBMgr {
 				}
 			}
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
+		}
+		return flag;
+	}
+
+	// 관리자 여부 확인
+	public boolean CheckManagerEmployee(String id) {
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "select em_manage from employee where em_id =?;";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				if (rs.getString("em_manage").equals("관리자")) {
+					flag = true;
+				} else {
+					flag = false;
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -201,7 +225,7 @@ public class DBMgr {
 	public void SignUpAlba(AlbaBean bean) {
 		try {
 			con = pool.getConnection();
-			sql = "insert into employee(alba_id, alba_pw, alba_name, alba_birthday, alba_phone, parttime) values (?,?,?,?,?,?);";
+			sql = "insert into alba(alba_id, alba_pw, alba_name, alba_birthday, alba_phone, parttime) values (?,?,?,?,?,?);";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, bean.getid());
 			pstmt.setString(2, bean.getpw());
@@ -240,10 +264,218 @@ public class DBMgr {
 		}
 		return flag;
 	}
-	
-	
-	// 마이페이지 정보 불러오기
-	public EmployeeBean listEmployee(String id){
+
+	// 알바 문의사항 작성
+	public boolean insertinquire(InquireBean bean) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		boolean flag = false;
+
+		try {
+			con = pool.getConnection();
+			sql = "INSERT INTO alba_inquire (inquire_id, inquire_title, inquire_contents) VALUES (?, ?, ?)"; // 테이블 이름 및
+																												// 컬럼 명시
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bean.getInquire_id());
+			pstmt.setString(2, bean.getInquire_title());
+			pstmt.setString(3, bean.getInquire_contents());
+
+			int cnt = pstmt.executeUpdate();
+			if (cnt == 1)
+				flag = true;
+
+		} catch (Exception e) {
+			e.printStackTrace(); // 스택 트레이스 출력
+		} finally {
+			pool.freeConnection(con, pstmt); // 자원 해제
+		}
+
+		return flag;
+	}
+
+	// 알바 문의사항 리스트 불러오기
+	public Vector<InquireBean> selectinquire() {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
+		Vector<InquireBean> vlist = new Vector<InquireBean>();
+		try {
+			con = pool.getConnection();
+			sql = "select * from alba_inquire";
+			pstmt = con.prepareStatement(sql);
+
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				if (rs.getString(5) == null) {
+					InquireBean bean = new InquireBean();
+					bean.setInquire_num(rs.getInt(1));
+					bean.setInquire_id(rs.getString(2));
+					bean.setInquire_title(rs.getString(3));
+					bean.setInquire_contents(rs.getString(4));
+					vlist.addElement(bean);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return vlist;
+	}
+
+	// 알바 문의사항 답글 DB 업로드
+	public boolean reviewInquire(InquireBean bean) {
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "UPDATE alba_inquire SET reply_contents=? WHERE inquire_num = ?;";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bean.getReply_contents());
+			pstmt.setInt(2, bean.getInquire_num());
+
+			int rowsAffected = pstmt.executeUpdate();
+			if (rowsAffected == 1) {
+				flag = true;
+			} else {
+				System.out.println("No rows updated. Check inquire_num and reply_contents.");
+			}
+
+			if (pstmt.executeUpdate() == 1)
+				flag = true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return flag;
+
+	}
+
+	// 투두리스트 가져오기
+	public Vector<TodoBean> selectTodo(String id) {
+		Vector<TodoBean> vlist = new Vector<TodoBean>();
+		try {
+			con = pool.getConnection();
+			sql = "select * from todo where writer_id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				TodoBean bean = new TodoBean();
+				bean.setNum(rs.getInt(1));
+				bean.setTodo_contents(rs.getString(3));
+				bean.setWriter_id(rs.getString(2));
+				vlist.addElement(bean);
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return vlist;
+	}
+
+	// 투두 리스트 작성
+	public boolean insertTodo(TodoBean bean) {
+		boolean flag = false;
+
+		try {
+			con = pool.getConnection();
+			sql = "INSERT INTO todo (writer_id, todo_contents) VALUES (?, ?)"; // 테이블 이름 및 컬럼 명시
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bean.getWriter_id());
+			pstmt.setString(2, bean.getTodo_contents());
+
+			int cnt = pstmt.executeUpdate();
+			if (cnt == 1)
+				flag = true;
+
+		} catch (Exception e) {
+			e.printStackTrace(); // 스택 트레이스 출력
+		} finally {
+			pool.freeConnection(con, pstmt); // 자원 해제
+		}
+
+		return flag;
+	}
+
+	// 투두리스트 내용 가져오기
+	public Vector<String> getTodo(String id) {
+		Vector<String> vlist = new Vector<String>();
+		try {
+			con = pool.getConnection();
+			sql = "select distinct todo_contents from todo";
+			pstmt = con.prepareStatement(sql);
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+
+				vlist.addElement(rs.getString(1));
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return vlist;
+	}
+
+	// 투두리스트 삭제
+	public boolean deleteTodo(int num) {
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "delete from todo where todo_num = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			if (pstmt.executeUpdate() == 1)
+				flag = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return flag;
+	}
+
+	// 투두리스트 내용변경
+	public boolean changeTodo(TodoBean bean1, TodoBean bean2) {
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "update todo set todo_contents=? where todo_num=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bean2.getTodo_contents());
+			pstmt.setInt(2, bean1.getNum());
+
+			if (pstmt.executeUpdate() == 1)
+				flag = true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return flag;
+
+	}
+
+	// 직원 마이페이지 정보 불러오기
+	public EmployeeBean listEmployee(String id) {
 		EmployeeBean bean = new EmployeeBean();
 		try {
 			con = pool.getConnection();
@@ -263,14 +495,13 @@ public class DBMgr {
 		}
 		return bean;
 	}
-	
 
-	// 마이페이지 수정
+	// 직원 마이페이지 수정
 	public boolean updateEmployee(EmployeeBean bean) {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "update employee set em_pw = ?, em_name = ?, em_phone = ?, em_position = ? where id = ?";
+			sql = "update employee set em_pw = ?, em_name = ?, em_phone = ?, em_position = ? where em_id = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, bean.getPw());
 			pstmt.setString(2, bean.getName());
@@ -287,4 +518,49 @@ public class DBMgr {
 		}
 		return flag;
 	}
+	
+	// 알바 마이페이지 정보 불러오기
+		public AlbaBean listAlba(String id) {
+			AlbaBean bean = new AlbaBean();
+			try {
+				con = pool.getConnection();
+				sql = "select alba_name, alba_phone, parttime from alba where alba_id = ?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				while (rs.next()) {
+					bean.setname(rs.getString(1));
+					bean.setphone(rs.getString(2));
+					bean.setPart_time(rs.getString(3));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
+			}
+			return bean;
+		}
+	
+	// 알바 마이페이지 수정
+		public boolean updateAlba(AlbaBean bean) {
+			boolean flag = false;
+			try {
+				con = pool.getConnection();
+				sql = "update alba set alba_pw = ?, alba_name = ?, alba_phone = ?, parttime = ? where alba_id = ?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, bean.getpw());
+				pstmt.setString(2, bean.getname());
+				pstmt.setString(3, bean.getphone());
+				pstmt.setString(4, bean.getPart_time());
+				pstmt.setString(5, bean.getid());
+				pstmt.executeUpdate();
+				if (pstmt.executeUpdate() == 1)
+					flag = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
+			}
+			return flag;
+		}
 }

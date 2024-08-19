@@ -1,9 +1,9 @@
-package cmp.DB;
+package DB;
 
 import java.sql.*;
 import java.util.*;
 
-import cmp.DB.DBConnectionMgr;
+import DB.DBConnectionMgr;
 
 public class DBMgr {
 	private DBConnectionMgr pool;
@@ -471,7 +471,11 @@ public class DBMgr {
 			pool.freeConnection(con, pstmt);
 		}
 		return flag;
-
+	}
+	
+	// 휴가 신청
+	public void savaVacationEmployee() {
+		
 	}
 
 	// 직원 마이페이지 정보 불러오기
@@ -518,49 +522,70 @@ public class DBMgr {
 		}
 		return flag;
 	}
-	
+
 	// 알바 마이페이지 정보 불러오기
-		public AlbaBean listAlba(String id) {
-			AlbaBean bean = new AlbaBean();
-			try {
-				con = pool.getConnection();
-				sql = "select alba_name, alba_phone, parttime from alba where alba_id = ?";
-				pstmt = con.prepareStatement(sql);
-				pstmt.setString(1, id);
-				rs = pstmt.executeQuery();
-				while (rs.next()) {
-					bean.setname(rs.getString(1));
-					bean.setphone(rs.getString(2));
-					bean.setPart_time(rs.getString(3));
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
+	public AlbaBean listAlba(String id) {
+		AlbaBean bean = new AlbaBean();
+		try {
+			con = pool.getConnection();
+			sql = "select alba_name, alba_phone, parttime from alba where alba_id = ?;";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				bean.setname(rs.getString(1));
+				bean.setphone(rs.getString(2));
+				bean.setPart_time(rs.getString(3));
 			}
-			return bean;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
 		}
+		return bean;
+	}
 	
-	// 알바 마이페이지 수정
-		public boolean updateAlba(AlbaBean bean) {
-			boolean flag = false;
-			try {
-				con = pool.getConnection();
-				sql = "update alba set alba_pw = ?, alba_name = ?, alba_phone = ?, parttime = ? where alba_id = ?";
-				pstmt = con.prepareStatement(sql);
-				pstmt.setString(1, bean.getpw());
-				pstmt.setString(2, bean.getname());
-				pstmt.setString(3, bean.getphone());
-				pstmt.setString(4, bean.getPart_time());
-				pstmt.setString(5, bean.getid());
-				pstmt.executeUpdate();
-				if (pstmt.executeUpdate() == 1)
-					flag = true;
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
+	// 알바 파트타임 시간 불러오기
+	public ParttimeBean infoParttime(String id) {
+		ParttimeBean bean = new ParttimeBean();
+		try {
+			con = pool.getConnection();
+			sql = "select start_time, end_time from alba, parttime where alba_id = ? and parttime.part_time = alba.parttime";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				bean.setStart_time(rs.getString(1));
+				bean.setEnd_time(rs.getString(2));
 			}
-			return flag;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
 		}
+		return bean;
+	}
+
+	// 알바 마이페이지 수정
+	public boolean updateAlba(AlbaBean bean) {
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "update alba set alba_pw = ?, alba_name = ?, alba_phone = ?, parttime = ? where alba_id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bean.getpw());
+			pstmt.setString(2, bean.getname());
+			pstmt.setString(3, bean.getphone());
+			pstmt.setString(4, bean.getPart_time());
+			pstmt.setString(5, bean.getid());
+			pstmt.executeUpdate();
+			if (pstmt.executeUpdate() == 1)
+				flag = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
+		}
+		return flag;
+	}
 }

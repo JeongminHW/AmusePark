@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.*;
 import javax.swing.*;
@@ -7,10 +7,20 @@ import javax.swing.border.EmptyBorder;
 public class CentralDropShadowPanel extends JPanel {
     private int shadowSize;
     private Color shadowColor;
+    private int setRad;
 
     public CentralDropShadowPanel(int par, Color color) {
         this.shadowSize = par;
         this.shadowColor = color;
+        setRad = 40;
+        setOpaque(false); // 패널을 투명하게 설정하여 배경을 보이게 함
+        setBorder(new EmptyBorder(shadowSize, shadowSize, shadowSize, shadowSize)); // 패딩 설정
+    }
+
+    public CentralDropShadowPanel(Color c, int setRad){
+        shadowSize = 6;
+        this.setRad = setRad;
+        this.shadowColor = c;
         setOpaque(false); // 패널을 투명하게 설정하여 배경을 보이게 함
         setBorder(new EmptyBorder(shadowSize, shadowSize, shadowSize, shadowSize)); // 패딩 설정
     }
@@ -30,14 +40,14 @@ public class CentralDropShadowPanel extends JPanel {
         // 부드러운 섀도우 효과를 위한 블러 적용
         for (int i = shadowSize; i > 0; i--) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) i / (shadowSize * 12)));
-            g2.fillRoundRect(shadowSize - i, shadowSize - i, getWidth() - (shadowSize - i) * 2, getHeight() - (shadowSize - i) * 2, 50, 50);
+            g2.fillRoundRect(shadowSize - i, shadowSize - i, getWidth() - (shadowSize - i) * 2, getHeight() - (shadowSize - i) * 2, setRad+10, setRad+10);
         }
 
 
         // 패널 본체 그리기
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         g2.setColor(getBackground());
-        g2.fillRoundRect(shadowSize, shadowSize, getWidth() - shadowSize * 2, getHeight() - shadowSize * 2, 40, 40);
+        g2.fillRoundRect(shadowSize, shadowSize, getWidth() - shadowSize * 2, getHeight() - shadowSize * 2, setRad, setRad);
 
         g2.dispose();
     }

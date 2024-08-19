@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -34,14 +34,14 @@ public class CalendarPanel extends JPanel {
 
         // 상단 패널 (월 표시 및 이동 버튼)
         JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout());
+        topPanel.setLayout(new BorderLayout());
         topPanel.setBackground(Color.WHITE);
 
         ImageIcon leftIcon = new ImageIcon("src/image/leftArrow.png");
         ImageIcon rightIcon = new ImageIcon("src/image/rightArrow.png");
 
-        prevButton = new RoundedButton(leftIcon, 50);
-        nextButton = new RoundedButton(rightIcon, 50);
+        prevButton = new RoundedButton("◀", 50);
+        nextButton = new RoundedButton("▶", 50);
         monthLabel = new JLabel(getMonthName(currentMonth) + " " + currentYear, JLabel.CENTER);
         monthLabel.setFont(new Font("Arial", Font.BOLD, 15));
         monthLabel.setForeground(Color.BLACK);
@@ -50,9 +50,9 @@ public class CalendarPanel extends JPanel {
         nextButton.setPreferredSize(new Dimension(50,50));
         prevButton.setBorder(null);
         nextButton.setBorder(null);
-        topPanel.add(prevButton);
-        topPanel.add(monthLabel);
-        topPanel.add(nextButton);
+        topPanel.add(prevButton, BorderLayout.WEST);
+        topPanel.add(monthLabel, BorderLayout.CENTER);
+        topPanel.add(nextButton, BorderLayout.EAST);
 
         add(topPanel, BorderLayout.NORTH);
 

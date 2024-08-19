@@ -1,5 +1,6 @@
-package cmp.GUI;
+package GUI;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -16,11 +17,12 @@ public class Appmake extends JPanel {
     JLabel appLabel;
     JButton appButton;
     public Appmake(int radius, String label) {
-        appButton = new RoundedButton("", 20);
+        appButton = new RoundedButton("", radius);
         appLabel = new JLabel(label);
 
-        //appButton.setMinimumSize(new Dimension(50,50));   // 최소 크기 설정
-        //appButton.setMaximumSize(new Dimension(50,50));   // 최대 크기 설정
+        appButton.setMinimumSize(new Dimension(50,50));   // 최소 크기 설정
+        appButton.setMaximumSize(new Dimension(50,50));   // 최대 크기 설정
+        appButton.setPreferredSize(new Dimension(50,50));
         appButton.setBorder(null);
         appButton.setFocusable(false);
         appButton.setBackground(Color.white);
@@ -64,6 +66,28 @@ public class Appmake extends JPanel {
         add(Box.createVerticalStrut(10));  // 간격 조정
         add(appLabel);
         // 아이콘으로 초기화하는 생성자 구현 (필요 시)
+    }
+
+    public Appmake(int radius, String label, Color c) {
+        appButton = new RoundedButton("", radius);
+        appLabel = new JLabel(label);
+
+        appButton.setMaximumSize(new Dimension(50,50));   // 최대 크기 설정
+        appButton.setPreferredSize(new Dimension(50,50));
+        appButton.setBorder(null);
+        appButton.setFocusable(false);
+        appButton.setBackground(c);
+
+        //appLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        //appLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
+        //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(new BorderLayout());
+        setBorder(null);
+        setBackground(Color.WHITE);
+
+        add(appButton, BorderLayout.NORTH);
+        add(Box.createVerticalStrut(10));  // 간격 조정
+        add(appLabel, BorderLayout.SOUTH);
     }
 
     

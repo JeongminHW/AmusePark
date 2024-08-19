@@ -1,8 +1,8 @@
-package cmp.GUI;
+package GUI;
 
 import javax.swing.*;
 
-import cmp.DB.*;
+import DB.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

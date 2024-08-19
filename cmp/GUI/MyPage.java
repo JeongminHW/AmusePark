@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,7 +11,7 @@ import javax.swing.*;
 
 import org.xnio.channels.SslChannel;
 
-import cmp.DB.*;
+import DB.*;
 
 public class MyPage implements ActionListener {
 	static String em_id = "";
@@ -36,6 +36,7 @@ public class MyPage implements ActionListener {
 	DBMgr db = new DBMgr();
 	EmployeeBean Embean = new EmployeeBean();
 	AlbaBean Albabean = new AlbaBean();
+	ParttimeBean Ptbean = new ParttimeBean();
 	Vector<EmployeeBean> vlist;
 
 	JFrame frame = new JFrame("마이페이지");
@@ -56,6 +57,7 @@ public class MyPage implements ActionListener {
 	JPasswordField confirmPasswordField = new JPasswordField("");
 	JTextField phoneField = new JTextField("");
 	JTextField positionField = new JTextField("");
+	JTextField partTimeClock = new JTextField("");
 	JCheckBox adminCheckBox = new JCheckBox("YES");
 	JButton saveButton = new RoundedButton("저장", 20);
 	JButton cancelButton = new RoundedButton("취소", 20);
@@ -65,19 +67,30 @@ public class MyPage implements ActionListener {
 			frame.setTitle("마이페이지 - " + alba_id);
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setSize(500, 400);
-			// System.out.println(getAlba_id() +"\n" + getEm_id());
 
 			// 정보 불러오기
 			loadAlba(alba_id);
 			Form(alba_id);
 			positionLabel.setText("파트타임");
-		} 
-		else if (!em_id.equals("")) { // 직원 마이페이지
+			positionLabel.setText("시간");
+			partTimeClock.setEnabled(false);
+			mainPanel.remove(adminCheckBox);
+			mainPanel.add(partTimeClock, 15);
+		} else if (!em_id.equals("")) { // 직원 마이페이지
 			frame.setTitle("마이페이지 - " + getEm_id());
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setSize(500, 400);
-			System.out.println(getAlba_id() + "\n" + getEm_id());
+
+			// 정보 불러오기
+			loadEmployeeInfo(em_id);
 			Form(em_id);
+
+			// 매니저 여부 체크
+			if (db.CheckManagerEmployee(em_id)) {
+				adminCheckBox.setSelected(true);
+			} else {
+				adminCheckBox.setSelected(false);
+			}
 		}
 
 	}
@@ -96,13 +109,6 @@ public class MyPage implements ActionListener {
 		cancelButton.addActionListener(this);
 
 		mainPanel.setBackground(Color.white);
-
-		// 매니저 여부 체크
-		if (db.CheckManagerEmployee(id)) {
-			adminCheckBox.setSelected(true);
-		} else {
-			adminCheckBox.setSelected(false);
-		}
 
 		mainPanel.add(idLabel);
 		mainPanel.add(idField);
@@ -142,9 +148,11 @@ public class MyPage implements ActionListener {
 	// 알바 정보 불러오기
 	private void loadAlba(String id) {
 		Albabean = db.listAlba(id);
+		Ptbean = db.infoParttime(id);
 		nameField.setText(Albabean.getname());
 		phoneField.setText(Albabean.getphone());
 		positionField.setText(Albabean.getPart_time());
+		partTimeClock.setText(Ptbean.getStart_time() + " - " + Ptbean.getEnd_time());
 	}
 
 	@Override
@@ -158,7 +166,7 @@ public class MyPage implements ActionListener {
 		String position = positionField.getText();
 		boolean managerChk = adminCheckBox.isSelected();
 		if (obj == saveButton) {
-			if (!oldpw.equals("") && !newpw.equals("") && !pwChk.equals("") && positionLabel.getText().equals("직급")) {
+			if (!oldpw.equals("") && !newpw.equals("") && !pwChk.equals("") && positionLabel.getText().equals("직급")) { // 직원
 				if (newpw.equals(pwChk)) {
 					Embean.setPw(pwChk);
 					Embean.setName(name);
@@ -170,8 +178,7 @@ public class MyPage implements ActionListener {
 				} else {
 					JOptionPane.showMessageDialog(null, "비밀번호가 다릅니다.", "수정", JOptionPane.ERROR_MESSAGE);
 				}
-			}
-			else if(!oldpw.equals("") && !newpw.equals("") && !pwChk.equals("") && positionLabel.getText().equals("파트타임")) {
+			} else if (!oldpw.equals("") && !newpw.equals("") && !pwChk.equals("") && positionLabel.getText().equals("파트타임")) { // 알바
 				if (newpw.equals(pwChk)) {
 					Albabean.setpw(pwChk);
 					Albabean.setname(name);

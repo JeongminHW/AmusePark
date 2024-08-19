@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.Color;
 import java.awt.Component;

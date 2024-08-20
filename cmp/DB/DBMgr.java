@@ -1,9 +1,9 @@
-package DB;
+package cmp.DB;
 
 import java.sql.*;
 import java.util.*;
 
-import DB.DBConnectionMgr;
+import cmp.DB.DBConnectionMgr;
 
 public class DBMgr {
 	private DBConnectionMgr pool;
@@ -196,6 +196,48 @@ public class DBMgr {
 		return flag;
 	}
 
+	// 휴가 리스트 불러오기
+	public Vector<VacationBean> listVacation() {
+		Vector<VacationBean> vlist = new Vector<VacationBean>();
+		try {
+			con = pool.getConnection();
+			sql = "select a.em_name, b.vacation_start, b.vacation_end, b.vacation_reason from employee a, vacation b where b.request_id = a.em_id;";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				VacationBean bean = new VacationBean();
+				bean.setName(rs.getString(1));
+				bean.setStart(rs.getString(2));
+				bean.setEnd(rs.getString(3));
+				bean.setReason(rs.getString(4));
+				vlist.addElement(bean);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return vlist;
+	}
+
+	// 휴가 신청
+	public void savaVacationEmployee(VacationBean bean) {
+		try {
+			con = pool.getConnection();
+			String sql = "INSERT INTO vacation (request_id, vacation_start, vacation_end, vacation_reason) VALUES (?, ?, ?, ?)";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bean.getId());
+			pstmt.setString(2, bean.getStart());
+			pstmt.setString(3, bean.getEnd());
+			pstmt.setString(4, bean.getReason());
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+	}
+
 	// 알바 로그인
 	public boolean LoginCheckAlba(String id, String pw) {
 		boolean flag = false;
@@ -296,10 +338,6 @@ public class DBMgr {
 
 	// 알바 문의사항 리스트 불러오기
 	public Vector<InquireBean> selectinquire() {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql = null;
 		Vector<InquireBean> vlist = new Vector<InquireBean>();
 		try {
 			con = pool.getConnection();
@@ -328,10 +366,6 @@ public class DBMgr {
 
 	// 알바 문의사항 답글 DB 업로드
 	public boolean reviewInquire(InquireBean bean) {
-
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		String sql = null;
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
@@ -357,6 +391,48 @@ public class DBMgr {
 		}
 		return flag;
 
+	}
+
+	// 문의사항 이름 확인
+	public String myName(String id) {
+		String name = null;
+
+		try {
+			con = pool.getConnection();
+			sql = "select alba_name from alba where alba_id=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				name = rs.getString(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return name;
+	}
+
+	// 문의사항 삭제
+	public boolean deleteInquire(int num) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "delete from alba_inquire where inquire_num = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			if (pstmt.executeUpdate() == 1)
+				flag = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return flag;
 	}
 
 	// 투두리스트 가져오기
@@ -472,11 +548,6 @@ public class DBMgr {
 		}
 		return flag;
 	}
-	
-	// 휴가 신청
-	public void savaVacationEmployee() {
-		
-	}
 
 	// 직원 마이페이지 정보 불러오기
 	public EmployeeBean listEmployee(String id) {
@@ -544,7 +615,7 @@ public class DBMgr {
 		}
 		return bean;
 	}
-	
+
 	// 알바 파트타임 시간 불러오기
 	public ParttimeBean infoParttime(String id) {
 		ParttimeBean bean = new ParttimeBean();
@@ -554,7 +625,7 @@ public class DBMgr {
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				bean.setStart_time(rs.getString(1));
 				bean.setEnd_time(rs.getString(2));
 			}

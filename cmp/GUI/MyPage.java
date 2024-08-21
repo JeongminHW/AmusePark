@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,7 +11,7 @@ import javax.swing.*;
 
 import org.xnio.channels.SslChannel;
 
-import cmp.DB.*;
+import DB.*;
 
 public class MyPage implements ActionListener {
 	static String em_id = "";
@@ -67,6 +67,7 @@ public class MyPage implements ActionListener {
 			frame.setTitle("마이페이지 - " + alba_id);
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setSize(500, 400);
+			frame.setVisible(true);
 
 			// 정보 불러오기
 			loadAlba(alba_id);
@@ -80,6 +81,7 @@ public class MyPage implements ActionListener {
 			frame.setTitle("마이페이지 - " + getEm_id());
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setSize(500, 400);
+			frame.setVisible(true);
 
 			// 정보 불러오기
 			loadEmployeeInfo(em_id);

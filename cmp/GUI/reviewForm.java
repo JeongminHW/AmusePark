@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
@@ -14,7 +14,7 @@ import java.util.Vector;
 
 import javax.swing.JFrame;
 
-import cmp.DB.*;
+import DB.*;
 
 public class reviewForm implements ActionListener {
 

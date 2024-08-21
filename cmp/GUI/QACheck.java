@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.EventQueue;
 
@@ -22,7 +22,7 @@ import javax.swing.JButton;
 import java.awt.Cursor;
 import javax.swing.BorderFactory;
 import javax.swing.SwingConstants;
-import cmp.DB.*;
+import DB.*;
 
 public class QACheck extends JFrame {
 

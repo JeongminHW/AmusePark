@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,7 +39,7 @@ import java.awt.Component;
 import java.awt.ComponentOrientation;
 import javax.swing.DefaultComboBoxModel;
 
-import cmp.DB.*;
+import DB.*;
 
 import java.util.*;
 
@@ -125,6 +125,7 @@ public class Vacation extends JFrame implements ActionListener {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 400);
 		setVisible(true);
+		setTitle("휴가 신청 - " + id);
 		mainPanel = new JPanel();
 		mainPanel.setBackground(new Color(255, 255, 255));
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -533,6 +534,10 @@ public class Vacation extends JFrame implements ActionListener {
 
 		cancelButton.addActionListener(this);
 		confirmButton.addActionListener(this);
+		
+		if (getTitle().equals("휴가 신청 - null")) {
+			dispose();
+		}
 	}
 
 	@Override
@@ -553,16 +558,6 @@ public class Vacation extends JFrame implements ActionListener {
 				// 날짜 문자열
 				String strDate = Syear + "" + Smonth + "" + Sday;
 				String endDate = Eyear + "" + Emonth + "" + Eday;
-
-				// 날짜 형식
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-				// 문자열을 LocalDate로 변환
-				LocalDate from = LocalDate.parse(strDate, formatter);
-				LocalDate to = LocalDate.parse(endDate, formatter);
-				// 두 날짜 간의 차이 계산 (일 단위)
-				long daysBetween = ChronoUnit.DAYS.between(from, to);
-				// 결과 출력
-				System.out.println(daysBetween);
 
 				VacationBean bean = new VacationBean();
 				bean.setId(id);

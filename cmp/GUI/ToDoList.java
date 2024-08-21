@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,9 +6,9 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 import javax.swing.*;
 
-import cmp.DB.DBMgr;
-import cmp.DB.TodoBean;
-import cmp.GUI.EmployeeMain;
+import DB.DBMgr;
+import DB.TodoBean;
+import GUI.EmployeeMain;
 
 public class ToDoList implements ActionListener {
 	static String em_id = "";

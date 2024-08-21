@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 //디자인 변경 완
 
 import java.awt.Color;
@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import cmp.DB.*;
+import DB.*;
 
 public class PTLogin implements ActionListener, MouseListener{
 	DBMgr db = new DBMgr();

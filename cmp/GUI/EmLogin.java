@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import cmp.DB.*;
+import DB.*;
 
 public class EmLogin implements ActionListener, MouseListener {
 	DBMgr db = new DBMgr();
@@ -128,6 +128,7 @@ public class EmLogin implements ActionListener, MouseListener {
 				System.out.println("로그인 성공");
 				EmployeeMain EmMain = new EmployeeMain();
 				EmMain.setId(id);
+				new EmployeeMain();
 				frame.dispose();
 			} else {
 				JOptionPane.showMessageDialog(null, "아이디/비밀번호를 다시 입력해주세요.", "로그인 실패", JOptionPane.ERROR_MESSAGE);

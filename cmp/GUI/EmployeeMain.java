@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -44,8 +44,8 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import java.awt.event.MouseAdapter;
 
-import cmp.DB.*;
-import cmp.GUI.*;
+import DB.*;
+import GUI.*;
 
 public class EmployeeMain extends JFrame implements ActionListener {
 
@@ -86,13 +86,13 @@ public class EmployeeMain extends JFrame implements ActionListener {
 	JPanel contentPanel = new JPanel();
 	JPanel newPanel;
 	JLabel newJLabel;
-	//
-	ImageIcon vacation_icon = new ImageIcon("./cmp/IMG/vacation_img.png");
-	ImageIcon date_icon = new ImageIcon("./cmp/IMG/schedule_img.png");
-	ImageIcon mypage_icon = new ImageIcon("./cmp/IMG/user_img.png");
-	ImageIcon todo_icon = new ImageIcon("./cmp/IMG/todo_img.png");
-	ImageIcon ask_icon = new ImageIcon("./cmp/IMG/question_img.png");
-	ImageIcon chat_icon = new ImageIcon("./cmp/IMG/chat_img.png");
+
+	ImageIcon vacation_icon = new ImageIcon("./IMG/vacation_img.png");
+	ImageIcon date_icon = new ImageIcon("./IMG/schedule_img.png");
+	ImageIcon mypage_icon = new ImageIcon("./IMG/user_img.png");
+	ImageIcon todo_icon = new ImageIcon("./IMG/todo_img.png");
+	ImageIcon ask_icon = new ImageIcon("./IMG/question_img.png");
+	ImageIcon chat_icon = new ImageIcon("./IMG/chat_img.png");
 	JButton vacationButton = new RoundedButton(vacation_icon, 20);
 	JButton dateButton = new RoundedButton(date_icon, 20);
 	JButton myPageButton = new RoundedButton(mypage_icon, 20);
@@ -112,6 +112,7 @@ public class EmployeeMain extends JFrame implements ActionListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 500);
 		setVisible(true);
+		setTitle("직원 - " + id);
 		MainTest = new JPanel();
 		MainTest.setBackground(Color.WHITE);
 		MainTest.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -336,8 +337,8 @@ public class EmployeeMain extends JFrame implements ActionListener {
 		JScrollPane friendScrollPane = createScrollPane(createFriendPanel());
 		cardPanel.add(friendScrollPane, "FriendPanel");
 
-		// 채팅 목록 패널 생성
-		JScrollPane chatScrollPane = createScrollPane(createChatPanel());
+		// 채팅 목록 패널 생성 
+		JScrollPane chatScrollPane =createScrollPane(createChatPanel());
 		cardPanel.add(chatScrollPane, "ChatPanel");
 
 		// 버튼 액션 리스너 설정
@@ -354,6 +355,10 @@ public class EmployeeMain extends JFrame implements ActionListener {
 		todoButton.addActionListener(this);
 
 		updateTodoPanel();
+
+		if (getTitle().equals("직원 - null")) {
+			dispose();
+		}
 	}
 
 	// 사용자 정의 ScrollBar UI 클래스
@@ -521,7 +526,7 @@ public class EmployeeMain extends JFrame implements ActionListener {
 		CardLayout cardLayout = (CardLayout) cardPanel.getLayout();
 
 		// 채팅 패널만 업데이트
-		JPanel chatPanel = createChatPanel();
+		// JPanel chatPanel = createChatPanel();
 
 		// 기존 ChatPanel을 찾아서 교체
 		for (Component comp : cardPanel.getComponents()) {
@@ -533,9 +538,9 @@ public class EmployeeMain extends JFrame implements ActionListener {
 		}
 
 		// 새로 생성된 chatPanel을 추가 (스크롤 가능하게 처리)
-		JScrollPane chatScrollPane = createScrollPane(chatPanel);
-		chatScrollPane.setName("ChatPanel");
-		cardPanel.add(chatScrollPane, "ChatPanel");
+		// JScrollPane chatScrollPane = createScrollPane(chatPanel);
+		// chatScrollPane.setName("ChatPanel");
+		// cardPanel.add(chatScrollPane, "ChatPanel");
 
 		// 레이아웃 재계산 및 화면 갱신
 		cardPanel.revalidate();
@@ -550,15 +555,20 @@ public class EmployeeMain extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
 		if (obj == vacationButton) {
-			Vacation vaca = new Vacation();
-			vaca.setId(id);
-			new Vacation();
+			if (db.CheckManagerEmployee(id)) {
+				VacationConfirm vconfirm = new VacationConfirm();
+				vconfirm.setId(id);
+				new VacationConfirm();
+			} else {
+				Vacation vaca = new Vacation();
+				vaca.setId(id);
+				new Vacation();
+			}
 		} else if (obj == dateButton) {
 			if (db.CheckManagerEmployee(id)) {
 				NoticeCreate nc = new NoticeCreate();
 				nc.setId(id);
-			}
-			else {
+			} else {
 				NoticeView nv = new NoticeView();
 				nv.setId(id);
 			}

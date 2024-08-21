@@ -1,11 +1,11 @@
-package cmp.DB;
+package DB;
 
 import java.sql.*;
 import java.util.*;
 
 import javax.swing.JOptionPane;
 
-import cmp.DB.DBConnectionMgr;
+import DB.DBConnectionMgr;
 
 public class DBMgr {
 	private DBConnectionMgr pool;
@@ -203,15 +203,17 @@ public class DBMgr {
 		Vector<VacationBean> vlist = new Vector<VacationBean>();
 		try {
 			con = pool.getConnection();
-			sql = "select a.em_name, b.vacation_start, b.vacation_end, b.vacation_reason from employee a, vacation b where b.request_id = a.em_id;";
+			sql = "select a.em_name,b.request_num, b.vacation_start, b.vacation_end, b.vacation_reason, b.request_id from employee a, vacation b where b.request_id = a.em_id;";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				VacationBean bean = new VacationBean();
 				bean.setName(rs.getString(1));
-				bean.setStart(rs.getString(2));
-				bean.setEnd(rs.getString(3));
-				bean.setReason(rs.getString(4));
+				bean.setNum(rs.getInt(2));
+				bean.setStart(rs.getString(3));
+				bean.setEnd(rs.getString(4));
+				bean.setReason(rs.getString(5));
+				bean.setId(rs.getString(6));
 				vlist.addElement(bean);
 			}
 		} catch (Exception e) {
@@ -239,7 +241,7 @@ public class DBMgr {
 			pool.freeConnection(con, pstmt);
 		}
 	}
-	
+
 	// 직원 남은 휴가 일수 체크
 	public int TotalVacation(String id) {
 		int vacation = 0;
@@ -259,8 +261,44 @@ public class DBMgr {
 		}
 		return vacation;
 	}
+	
+	// 관리자 휴가 수락
+	public boolean acceptVacation(int num) {
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "delete from vacation where request_num = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			if(pstmt.executeUpdate() == 1) {
+				flag = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
+		}
+		return flag;
+	}
 
-	// 직원 휴가 사용 시 남은 휴가 일수 업데이트
+	// 직원 휴가 허락되면 사용한 날짜를 뺀 남은 휴가 일수 업데이트
+	public boolean updateRemainVacation(String id, int diff_day) {
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "update employee set usable_vacation = usable_vacation - ? where em_id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, diff_day);
+			pstmt.setString(2, id);
+			if(pstmt.executeUpdate() == 1)
+				flag = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
+		}
+		return flag;
+	}
 
 	// 알바 로그인
 	public boolean LoginCheckAlba(String id, String pw) {
@@ -403,11 +441,7 @@ public class DBMgr {
 
 	// 알바 문의사항 작성
 	public boolean insertinquire(InquireBean bean) {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		String sql = null;
 		boolean flag = false;
-
 		try {
 			con = pool.getConnection();
 			sql = "INSERT INTO alba_inquire (inquire_id, inquire_title, inquire_contents) VALUES (?, ?, ?)"; // 테이블 이름 및
@@ -517,7 +551,6 @@ public class DBMgr {
 	// 문의사항 이름 확인
 	public String myName(String id) {
 		String name = null;
-
 		try {
 			con = pool.getConnection();
 			sql = "select alba_name from alba where alba_id=?";
@@ -537,9 +570,6 @@ public class DBMgr {
 
 	// 문의사항 삭제
 	public boolean deleteInquire(int num) {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		String sql = null;
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
@@ -556,6 +586,29 @@ public class DBMgr {
 		return flag;
 	}
 
+	// 일정 표시
+	public Vector<ScheduleBean> selectSchedule() {
+		Vector<ScheduleBean> vlist = new Vector<ScheduleBean>();
+		try {
+			con = pool.getConnection();
+			sql = "SELECT schedule_contents, DATE_FORMAT(schedule_start, '%m-%d') AS schedule_start, DATE_FORMAT(schedule_end, '%m-%d') AS schedule_end FROM SCHEDULE";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				ScheduleBean bean = new ScheduleBean();
+				bean.setScheduel_contents(rs.getString(1));
+				bean.setSchedule_start(rs.getString(2));
+				bean.setSchedule_end(rs.getString(3));
+				vlist.addElement(bean);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return vlist;
+	}
+	
 	// 투두리스트 가져오기
 	public Vector<TodoBean> selectTodo(String id) {
 		Vector<TodoBean> vlist = new Vector<TodoBean>();

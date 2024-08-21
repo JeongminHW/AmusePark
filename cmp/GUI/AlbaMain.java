@@ -323,9 +323,10 @@ public class AlbaMain extends JFrame implements ActionListener {
 		AlbaBean bean = new AlbaBean();
 		if (obj == appButton1) {
 			ToDoList todolist = new ToDoList();
+			todolist.setAlba_id(id);
 			dispose();
-		} else if (obj == appButton2) { // 문의사항 버튼
-			CreateQA qa = new CreateQA(id);
+		} else if (obj == appButton2) { // 일정 버튼
+			NoticeView nv = new NoticeView();
 			dispose();
 		} else if (obj == appButton3) {
 			MyPage mypage = new MyPage();

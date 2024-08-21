@@ -223,7 +223,7 @@ public class DBMgr {
 	}
 
 	// 휴가 신청
-	public void savaVacationEmployee(VacationBean bean) {
+	public void saveVacationEmployee(VacationBean bean) {
 		try {
 			con = pool.getConnection();
 			String sql = "INSERT INTO vacation (request_id, vacation_start, vacation_end, vacation_reason) VALUES (?, ?, ?, ?)";
@@ -239,6 +239,28 @@ public class DBMgr {
 			pool.freeConnection(con, pstmt);
 		}
 	}
+	
+	// 직원 남은 휴가 일수 체크
+	public int TotalVacation(String id) {
+		int vacation = 0;
+		try {
+			con = pool.getConnection();
+			sql = "select usable_vacation from employee where em_id = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				vacation = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
+		}
+		return vacation;
+	}
+
+	// 직원 휴가 사용 시 남은 휴가 일수 업데이트
 
 	// 알바 로그인
 	public boolean LoginCheckAlba(String id, String pw) {
@@ -307,7 +329,7 @@ public class DBMgr {
 		}
 		return flag;
 	}
-	
+
 	// 알바 출퇴근 버튼 클릭 시 출근 상태로 업데이트
 	public boolean updateWorkcheckTrue(String id) {
 		boolean flag = false;
@@ -317,7 +339,7 @@ public class DBMgr {
 			pstmt = con.prepareStatement(sql);
 			JOptionPane.showMessageDialog(null, "출근 처리 되었습니다.", "출/퇴근 처리", JOptionPane.PLAIN_MESSAGE);
 			pstmt.setString(1, id);
-			if(pstmt.executeUpdate() == 1) {
+			if (pstmt.executeUpdate() == 1) {
 				flag = true;
 			}
 		} catch (Exception e) {
@@ -327,7 +349,7 @@ public class DBMgr {
 		}
 		return flag;
 	}
-	
+
 	// 알바 출퇴근 버튼 클릭 시 퇴근 상태로 업데이트
 	public boolean updateWorkcheckFalse(String id) {
 		boolean flag = false;
@@ -337,7 +359,7 @@ public class DBMgr {
 			pstmt = con.prepareStatement(sql);
 			JOptionPane.showMessageDialog(null, "퇴근 처리 되었습니다.", "출/퇴근 처리", JOptionPane.PLAIN_MESSAGE);
 			pstmt.setString(1, id);
-			if(pstmt.executeUpdate() == 1) {
+			if (pstmt.executeUpdate() == 1) {
 				flag = true;
 			}
 		} catch (Exception e) {
@@ -347,7 +369,19 @@ public class DBMgr {
 		}
 		return flag;
 	}
-	
+
+	// 알바 출퇴근 여부 확인
+	public boolean commuteAlba(String id) {
+		boolean flag = false;
+		try {
+			con = pool.getConnection();
+			sql = "select ";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return flag;
+	}
+
 	// 알바 출퇴근 버튼 클릭 시 총 출근일 업데이트
 	public boolean updateTotalwork(String id) {
 		boolean flag = false;
@@ -356,7 +390,7 @@ public class DBMgr {
 			sql = "update alba set totalwork = totalwork + 1 where alba_id = ? and workcheck = 1;";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, id);
-			if(pstmt.executeUpdate() == 1) {
+			if (pstmt.executeUpdate() == 1) {
 				flag = true;
 			}
 		} catch (Exception e) {
@@ -397,32 +431,32 @@ public class DBMgr {
 	}
 
 	// 알바 문의사항 리스트 불러오기(관리자용)
-		public Vector<InquireBean> selectInquireManager() {
-			Vector<InquireBean> vlist = new Vector<InquireBean>();
-			try {
-				con = pool.getConnection();
-				sql = "select * from alba_inquire where alba_id = ?";
-				pstmt = con.prepareStatement(sql);
-				rs = pstmt.executeQuery();
-				while (rs.next()) {
-					if (rs.getString(5) == null) {
-						InquireBean bean = new InquireBean();
-						bean.setInquire_num(rs.getInt(1));
-						bean.setInquire_id(rs.getString(2));
-						bean.setInquire_title(rs.getString(3));
-						bean.setInquire_contents(rs.getString(4));
-						vlist.addElement(bean);
-					}
+	public Vector<InquireBean> selectInquireManager() {
+		Vector<InquireBean> vlist = new Vector<InquireBean>();
+		try {
+			con = pool.getConnection();
+			sql = "select * from alba_inquire where alba_id = ?";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				if (rs.getString(5) == null) {
+					InquireBean bean = new InquireBean();
+					bean.setInquire_num(rs.getInt(1));
+					bean.setInquire_id(rs.getString(2));
+					bean.setInquire_title(rs.getString(3));
+					bean.setInquire_contents(rs.getString(4));
+					vlist.addElement(bean);
 				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				pool.freeConnection(con, pstmt, rs);
 			}
-			return vlist;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
 		}
-	
+		return vlist;
+	}
+
 	// 알바 문의사항 리스트 불러오기(알바용)
 	public Vector<InquireBean> selectinquire(String id) {
 		Vector<InquireBean> vlist = new Vector<InquireBean>();
@@ -521,30 +555,6 @@ public class DBMgr {
 		}
 		return flag;
 	}
-	
-	// 직원 남은 휴가 일수 체크
-		public Vector<EmployeeBean> TotalVacation(String id) {
-			Vector<EmployeeBean> vlist = new Vector<EmployeeBean>();
-			try {
-				con = pool.getConnection();
-				sql = "select usable_vacation from employee where em_id = ?";
-				pstmt = con.prepareStatement(sql);
-				pstmt.setString(1, id);
-				rs = pstmt.executeQuery();
-				while (rs.next()) {
-					EmployeeBean bean = new EmployeeBean();
-					bean.setUsable_vacation(rs.getInt(1));
-					vlist.addElement(bean);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
-			}
-			return vlist;
-		}
-
-		// 직원 휴가 사용 시 남은 휴가 일수 업데이트
 
 	// 투두리스트 가져오기
 	public Vector<TodoBean> selectTodo(String id) {

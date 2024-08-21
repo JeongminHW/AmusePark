@@ -1,49 +1,55 @@
 package cmp.GUI;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.Font;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.border.EmptyBorder;
+
+import com.teamdev.jxbrowser.dom.event.MouseEvent;
+
+import java.awt.GridLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.ParseException;
 import java.util.Vector;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
+import java.awt.FlowLayout;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import java.awt.Component;
+import java.awt.Dimension;
+import javax.annotation.processing.RoundEnvironment;
+import java.awt.Font;
+import java.awt.Cursor;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+import java.awt.event.MouseAdapter;
 
 import cmp.DB.*;
+import cmp.GUI.*;
 
-public class EmployeeMain {
+public class EmployeeMain extends JFrame implements ActionListener {
+
 	static String id;
-	CardLayout cardLayout;
-	JPanel cardPanel;
-	private DefaultListModel<String> friendListModel;
-	private DefaultListModel<String> chatListModel;
-	private Vector<EmployeeBean> emvlist;
-	private Vector<EmployeeBean> em2vlist;
-	private Vector<chatListBean> cvlist;
-	private Vector<chatListBean> c2vlist;
-	private Vector<chatContentsBean> ccvlist;
-	private chatManager cm = new chatManager();
 
 	public static String getId() {
 		return id;
@@ -53,204 +59,372 @@ public class EmployeeMain {
 		EmployeeMain.id = id;
 	}
 
-	public static final Color LIGHT_ONE = new Color(200, 200, 200);
-	public static final Color REAL_LIGHT = new Color(228, 228, 228);
-	JFrame frame = new JFrame();
-	JPanel mainPanel = new JPanel();
+	DBMgr db = new DBMgr();
+	Vector<TodoBean> vlist;
+
+	private static final long serialVersionUID = 1L;
+	private final JPanel MainTest;
+	private CardLayout cardLayout;
+	private JPanel cardPanel;
+	private Vector<EmployeeBean> emvlist;
+	private Vector<EmployeeBean> em2vlist;
+	private Vector<chatListBean> cvlist;
+	private Vector<chatListBean> c2vlist;
+	private Vector<chatContentsBean> ccvlist;
+	private chatManager cm = new chatManager();
+
+	GridBagLayout gbl_mainTest = new GridBagLayout();
+	CentralDropShadowPanel leftUpperPanel = new CentralDropShadowPanel(Color.LIGHT_GRAY, 30);
+	GridBagConstraints gbc_leftUpperPanel = new GridBagConstraints();
 	JPanel calendarPanel = new CalendarPanel();
-	JPanel appPanel = new JPanel();
-	JPanel upperLeft = new JPanel();
-	JPanel downerLeft = new JPanel();
-	JPanel left = new JPanel();
-	JPanel right = new JPanel();
-	JPanel todoPanel = new JPanel();
-	JPanel TodoTitle = new JPanel();
-	JPanel chatTitle = new JPanel();
-	JPanel chatlistPanel = new JPanel();
-	CentralDropShadowPanel calendarContainer = new CentralDropShadowPanel(6, Color.LIGHT_GRAY);
-	CentralDropShadowPanel todoContainer = new CentralDropShadowPanel(6, Color.LIGHT_GRAY);
-	CentralDropShadowPanel appContainer = new CentralDropShadowPanel(6, Color.LIGHT_GRAY);
-	CentralDropShadowPanel chatBox = new CentralDropShadowPanel(6, Color.LIGHT_GRAY);
+	CentralDropShadowPanel rightUpperPanel = new CentralDropShadowPanel(Color.LIGHT_GRAY, 30);
+	GridBagConstraints gbc_rightUpperPanel = new GridBagConstraints();
+	JPanel titlePanel = new JPanel();
+	FlowLayout flowLayout = (FlowLayout) titlePanel.getLayout();
+	// 할일
+	JLabel todoTitleLabel = new JLabel("오늘 할일");
+	JPanel contentPanel = new JPanel();
+	JPanel newPanel;
+	JLabel newJLabel;
+	//
 	ImageIcon vacation_icon = new ImageIcon("./cmp/IMG/vacation_img.png");
 	ImageIcon date_icon = new ImageIcon("./cmp/IMG/schedule_img.png");
 	ImageIcon mypage_icon = new ImageIcon("./cmp/IMG/user_img.png");
 	ImageIcon todo_icon = new ImageIcon("./cmp/IMG/todo_img.png");
 	ImageIcon ask_icon = new ImageIcon("./cmp/IMG/question_img.png");
-	ImageIcon work_icon = new ImageIcon("./cmp/IMG/commute_img.png");
 	ImageIcon userCheck_icon = new ImageIcon("./cmp/IMG/park_img.png");
 	ImageIcon itemCheck_icon = new ImageIcon("./cmp/IMG/manage_img.png");
 	ImageIcon chat_icon = new ImageIcon("./cmp/IMG/chat_img.png");
-	JPanel vacation = new Appmake(25, "휴가", vacation_icon, "휴가");
-	JPanel date = new Appmake(25, "일정", date_icon, "일정");
-	JPanel myPage = new Appmake(25, "마이페이지", mypage_icon, "마이페이지");
-	JPanel ask = new Appmake(25, "문의사항", todo_icon, "문의사항");
-	JPanel todo = new Appmake(25, "할일", ask_icon, "할일");
-	JPanel work = new Appmake(25, "출근/퇴근", work_icon, "출퇴근");
-	JPanel userCheck = new Appmake(25, "사용자 집계", userCheck_icon, "집계");
-	JPanel itemCheck = new Appmake(25, "물품 관리", itemCheck_icon, "관리");
-	JLabel TodolistLabel = new JLabel("할일");
-	JLabel chat = new JLabel("채팅");
-	JTextArea stringContainer;
-	JTextArea chatRoomName;
-	JTextArea recentChat;
+	JButton vacationButton = new RoundedButton(vacation_icon, 20);
+	JButton dateButton = new RoundedButton(date_icon, 20);
+	JButton myPageButton = new RoundedButton(mypage_icon, 20);
+	JButton QAButton = new RoundedButton(ask_icon, 20);
+	JButton todoButton = new RoundedButton(todo_icon, 20);
+	JButton graphButton = new RoundedButton(userCheck_icon, 20);
+	JButton countButton = new RoundedButton(itemCheck_icon, 20);
+	JLabel vacationLabel = new JLabel("휴가");
+	JLabel dateLabel = new JLabel("일정");
+	JLabel myPageLabel = new JLabel("마이페이지");
+	JLabel QALabel = new JLabel("문의사항");
+	JLabel todoLabel = new JLabel("할일");
+	JLabel graphLabel = new JLabel("사용자 집계");
+	JLabel countLabel = new JLabel("물품관리");
 
-	DBMgr db = new DBMgr();
-
+	/**
+	 * Create the frame.
+	 */
 	public EmployeeMain() {
-		Appmake.setId(id);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(1200, 600);
-		frame.setVisible(true);
-		frame.setTitle("직원 - " + id);
 
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
-		mainPanel.setBackground(Color.WHITE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 800, 500);
+		setVisible(true);
+		MainTest = new JPanel();
+		MainTest.setBackground(Color.WHITE);
+		MainTest.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		upperLeft.setLayout(new BoxLayout(upperLeft, BoxLayout.X_AXIS));
-		upperLeft.setBackground(Color.WHITE);
+		setContentPane(MainTest);
+		gbl_mainTest.columnWidths = new int[] { 260, 240, 300 };
+		gbl_mainTest.rowHeights = new int[] { 265, 320 };
+		gbl_mainTest.columnWeights = new double[] { 1.0, 0.0, 0.0 };
+		gbl_mainTest.rowWeights = new double[] { 0.0, 1.0 };
+		MainTest.setLayout(gbl_mainTest);
 
-		calendarContainer.setLayout(new BoxLayout(calendarContainer, BoxLayout.Y_AXIS));
-		calendarContainer.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		leftUpperPanel.setBackground(Color.WHITE);
+		gbc_leftUpperPanel.fill = GridBagConstraints.BOTH;
+		gbc_leftUpperPanel.anchor = GridBagConstraints.NORTHWEST;
+		gbc_leftUpperPanel.insets = new Insets(0, 0, 5, 5);
+		gbc_leftUpperPanel.gridx = 0;
+		gbc_leftUpperPanel.gridy = 0;
+		MainTest.add(leftUpperPanel, gbc_leftUpperPanel);
+		leftUpperPanel.setLayout(new BorderLayout(0, 0));
 
-		appPanel.setLayout(new BoxLayout(appPanel, BoxLayout.X_AXIS));
-		appPanel.setBackground(Color.WHITE);
+		calendarPanel.setBorder(new EmptyBorder(15, 5, 15, 5));
+		calendarPanel.setOpaque(false);
+		leftUpperPanel.add(calendarPanel);
 
-		appContainer.setLayout(new BoxLayout(appContainer, BoxLayout.Y_AXIS));
-		appContainer.setBackground(Color.WHITE);
-		appContainer.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		rightUpperPanel.setBackground(Color.WHITE);
+		gbc_rightUpperPanel.fill = GridBagConstraints.BOTH;
+		gbc_rightUpperPanel.anchor = GridBagConstraints.NORTHWEST;
+		gbc_rightUpperPanel.insets = new Insets(0, 0, 5, 5);
+		gbc_rightUpperPanel.gridx = 1;
+		gbc_rightUpperPanel.gridy = 0;
+		MainTest.add(rightUpperPanel, gbc_rightUpperPanel);
+		rightUpperPanel.setLayout(new BoxLayout(rightUpperPanel, BoxLayout.Y_AXIS));
+
+		// 할 일
+		titlePanel.setMaximumSize(new Dimension(32767, 40));
+		titlePanel.setPreferredSize(new Dimension(10, 40));
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		titlePanel.setOpaque(false);
+		rightUpperPanel.add(titlePanel);
+
+		todoTitleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 16));
+		titlePanel.add(todoTitleLabel);
+
+		contentPanel.setOpaque(false);
+		rightUpperPanel.add(contentPanel);
+		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+
+		//
+		CentralDropShadowPanel DownerPanel = new CentralDropShadowPanel(Color.LIGHT_GRAY, 30);
+		DownerPanel.setBackground(Color.WHITE);
+		GridBagConstraints gbc_DownerPanel = new GridBagConstraints();
+		gbc_DownerPanel.fill = GridBagConstraints.BOTH;
+		gbc_DownerPanel.gridwidth = 2;
+		gbc_DownerPanel.insets = new Insets(0, 0, 0, 5);
+		gbc_DownerPanel.anchor = GridBagConstraints.NORTHWEST;
+		gbc_DownerPanel.gridx = 0;
+		gbc_DownerPanel.gridy = 1;
+		MainTest.add(DownerPanel, gbc_DownerPanel);
+		DownerPanel.setLayout(new BorderLayout(0, 0));
+
+		JPanel appContainer = new JPanel();
+		appContainer.setOpaque(false);
+		appContainer.setBorder(new EmptyBorder(20, 10, 10, 10));
+		DownerPanel.add(appContainer);
+		appContainer.setLayout(new GridLayout(0, 5, 5, 5));
+
+		JPanel appPanel = new JPanel();
+		appPanel.setOpaque(false);
+		appContainer.add(appPanel);
+		appPanel.setLayout(new BoxLayout(appPanel, BoxLayout.Y_AXIS));
+
+		vacationButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		vacationButton.setMaximumSize(new Dimension(40, 40));
+		vacationButton.setPreferredSize(new Dimension(40, 40));
+		vacationButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		vacationButton.setBackground(Color.white);
+		appPanel.add(vacationButton);
+
+		vacationLabel.setBorder(new EmptyBorder(5, 0, 0, 0));
+		vacationLabel.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		vacationLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		vacationLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		appPanel.add(vacationLabel);
+
+		JPanel appPanel_1 = new JPanel();
+		appPanel_1.setOpaque(false);
+		appContainer.add(appPanel_1);
+		appPanel_1.setLayout(new BoxLayout(appPanel_1, BoxLayout.Y_AXIS));
+
+		dateButton.setBackground(Color.white);
+		dateButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		dateButton.setMaximumSize(new Dimension(40, 40));
+		dateButton.setPreferredSize(new Dimension(40, 40));
+		dateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_1.add(dateButton);
+
+		dateLabel.setBorder(new EmptyBorder(5, 0, 0, 0));
+		dateLabel.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		dateLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_1.add(dateLabel);
+
+		JPanel appPanel_2 = new JPanel();
+		appPanel_2.setOpaque(false);
+		appContainer.add(appPanel_2);
+		appPanel_2.setLayout(new BoxLayout(appPanel_2, BoxLayout.Y_AXIS));
+
+		myPageButton.setBackground(Color.white);
+		myPageButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		myPageButton.setMaximumSize(new Dimension(40, 40));
+		myPageButton.setPreferredSize(new Dimension(40, 40));
+		myPageButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_2.add(myPageButton);
+
+		myPageLabel.setBorder(new EmptyBorder(5, 0, 0, 0));
+		myPageLabel.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		myPageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_2.add(myPageLabel);
+
+		JPanel appPanel_3 = new JPanel();
+		appPanel_3.setOpaque(false);
+		appContainer.add(appPanel_3);
+		appPanel_3.setLayout(new BoxLayout(appPanel_3, BoxLayout.Y_AXIS));
+
+		QAButton.setBackground(Color.white);
+		QAButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		QAButton.setMaximumSize(new Dimension(40, 40));
+		QAButton.setPreferredSize(new Dimension(40, 40));
+		QAButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_3.add(QAButton);
+
+		QALabel.setBackground(new Color(102, 204, 0));
+		QALabel.setBorder(new EmptyBorder(5, 0, 0, 0));
+		QALabel.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		QALabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_3.add(QALabel);
+
+		JPanel appPanel_4 = new JPanel();
+		appPanel_4.setOpaque(false);
+		appContainer.add(appPanel_4);
+		appPanel_4.setLayout(new BoxLayout(appPanel_4, BoxLayout.Y_AXIS));
+
+		todoButton.setBackground(Color.white);
+		todoButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		todoButton.setMaximumSize(new Dimension(40, 40));
+		todoButton.setPreferredSize(new Dimension(40, 40));
+		todoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_4.add(todoButton);
+
+		todoLabel.setBorder(new EmptyBorder(5, 0, 0, 0));
+		todoLabel.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		todoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_4.add(todoLabel);
+
+		JPanel appPanel_5 = new JPanel();
+		appPanel_5.setOpaque(false);
+		appContainer.add(appPanel_5);
+		appPanel_5.setLayout(new BoxLayout(appPanel_5, BoxLayout.Y_AXIS));
+
+		JPanel appPanel_6 = new JPanel();
+		appPanel_6.setOpaque(false);
+		appContainer.add(appPanel_6);
+		appPanel_6.setLayout(new BoxLayout(appPanel_6, BoxLayout.Y_AXIS));
+
+		graphButton.setBackground(Color.white);
+		graphButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		graphButton.setMaximumSize(new Dimension(40, 40));
+		graphButton.setPreferredSize(new Dimension(40, 40));
+		graphButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_6.add(graphButton);
+
+		graphLabel.setBorder(new EmptyBorder(5, 0, 0, 0));
+		graphLabel.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		graphLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_6.add(graphLabel);
+
+		JPanel appPanel_7 = new JPanel();
+		appPanel_7.setOpaque(false);
+		appContainer.add(appPanel_7);
+		appPanel_7.setLayout(new BoxLayout(appPanel_7, BoxLayout.Y_AXIS));
+
+		countButton.setBackground(Color.white);
+		countButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		countButton.setMaximumSize(new Dimension(40, 40));
+		countButton.setPreferredSize(new Dimension(40, 40));
+		countButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_7.add(countButton);
+
+		countLabel.setBorder(new EmptyBorder(5, 0, 0, 0));
+		countLabel.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		countLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		appPanel_7.add(countLabel);
+
+		CentralDropShadowPanel ChatingPanel = new CentralDropShadowPanel(Color.LIGHT_GRAY, 30);
+		ChatingPanel.setBackground(Color.WHITE);
+		GridBagConstraints gbc_ChatingPanel = new GridBagConstraints();
+		gbc_ChatingPanel.gridheight = 2;
+		gbc_ChatingPanel.insets = new Insets(0, 0, 0, 0);
+		gbc_ChatingPanel.fill = GridBagConstraints.BOTH;
+		gbc_ChatingPanel.gridx = 2;
+		gbc_ChatingPanel.gridy = 0;
+		MainTest.add(ChatingPanel, gbc_ChatingPanel);
+		ChatingPanel.setLayout(new BorderLayout(0, 0));
+
+		JPanel chatTitlePanel = new JPanel();
+		chatTitlePanel.setMaximumSize(new Dimension(32767, 40));
+		chatTitlePanel.setOpaque(false);
+		ChatingPanel.add(chatTitlePanel, BorderLayout.NORTH);
+		chatTitlePanel.setLayout(new BorderLayout(0, 0));
+
+		JButton chatNewButton = new RoundedButton("+", 20);
+		chatNewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		chatNewButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+		chatNewButton.setBackground(Color.WHITE);
+		chatNewButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							chatCreate frame = new chatCreate(id);
+							frame.setVisible(true);
+							frame.addWindowListener(new WindowAdapter() {
+								@Override
+								public void windowClosed(WindowEvent e) {
+									// 창이 닫힐 때 업데이트할 작업 수행
+									updateChatPanel();
+								}
+							});
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
+		chatTitlePanel.add(chatNewButton, BorderLayout.EAST);
+
+		JPanel cardButtonPanel = new JPanel();
+		cardButtonPanel.setOpaque(false);
+		FlowLayout fl_cardButtonPanel = (FlowLayout) cardButtonPanel.getLayout();
+		fl_cardButtonPanel.setAlignment(FlowLayout.LEFT);
+		chatTitlePanel.add(cardButtonPanel, BorderLayout.CENTER);
+
+		JButton friendButton = new RoundedButton("친구창", 20);
+		friendButton.setForeground(Color.WHITE);
+		friendButton.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		friendButton.setBackground(new Color(0, 204, 0));
+		cardButtonPanel.add(friendButton);
+
+		JButton chatButton = new RoundedButton("채팅창", 20);
+		chatButton.setForeground(Color.WHITE);
+		chatButton.setFont(new Font("맑은 고딕", Font.BOLD, 12));
+		chatButton.setBackground(new Color(0, 153, 255));
+		cardButtonPanel.add(chatButton);
 
 		cardLayout = new CardLayout();
 		cardPanel = new JPanel(cardLayout);
-		cardPanel.setOpaque(false);
+		ChatingPanel.add(cardPanel, BorderLayout.CENTER);
 
-		chatBox.setLayout(new BoxLayout(chatBox, BoxLayout.Y_AXIS));
-		chatBox.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+		// 친구 목록 패널 생성
+		JScrollPane friendScrollPane = createScrollPane(createFriendPanel());
+		cardPanel.add(friendScrollPane, "FriendPanel");
 
-		todoPanel.setLayout(new BoxLayout(todoPanel, BoxLayout.Y_AXIS));
-		todoPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+		// 채팅 목록 패널 생성
+		JScrollPane chatScrollPane = createScrollPane(createChatPanel());
+		cardPanel.add(chatScrollPane, "ChatPanel");
 
-		left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
-		right.setBackground(Color.WHITE);
+		// 버튼 액션 리스너 설정
+		friendButton.addActionListener(e -> cardLayout.show(cardPanel, "FriendPanel"));
+		chatButton.addActionListener(e -> cardLayout.show(cardPanel, "ChatPanel"));
 
-		calendarContainer.setBackground(Color.WHITE);
-		downerLeft.setBackground(Color.DARK_GRAY);
-		// calendarPanel.setBackground(Color.GREEN);
-		todoPanel.setBackground(Color.WHITE);
+		// 초기에는 친구창을 보여줌
+		cardLayout.show(cardPanel, "FriendPanel");
 
-		chatBox.setBackground(Color.WHITE);
-		left.setBackground(Color.WHITE);
-		todoContainer.setBackground(Color.WHITE);
+		vacationButton.addActionListener(this);
+		dateButton.addActionListener(this);
+		myPageButton.addActionListener(this);
+		QAButton.addActionListener(this);
+		todoButton.addActionListener(this);
+		graphButton.addActionListener(this);
+		countButton.addActionListener(this);
 
-		// Todo Panel
-		todoPanel.setPreferredSize(new Dimension(260, 200));
+		updateTodoPanel();
+	}
 
-		TodoTitle.setLayout(new BoxLayout(TodoTitle, BoxLayout.X_AXIS));
-		TodoTitle.setOpaque(false);
-		TodolistLabel.setFont(new Font("돋움", Font.BOLD, 24));
-		TodoTitle.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-		TodoTitle.add(TodolistLabel);
-		TodoTitle.add(Box.createHorizontalStrut(200));
-		todoPanel.add(TodoTitle);
-
-		for (int i = 0; i < 5; i++) {
-			String str = "AAAAAA";
-			stringContainer = new JTextArea();
-			stringContainer.setEditable(false);
-			stringContainer.setFocusable(false);
-			stringContainer.setText(" ● " + str);
-			todoPanel.add(stringContainer);
+	// 사용자 정의 ScrollBar UI 클래스
+	private static class CustomScrollBarUI extends javax.swing.plaf.basic.BasicScrollBarUI {
+		@Override
+		protected void configureScrollBarColors() {
+			this.thumbColor = new Color(0, 0, 0, 0); // 투명한 thumb 설정
+			this.trackColor = new Color(0, 0, 0, 0); // 투명한 track 설정
 		}
+	}
 
-		// chatbox
-		chatBox.setBorder(BorderFactory.createEmptyBorder(5, 6, 20, 6));
-		chatTitle.setOpaque(false);
-		chatBox.add(chatTitle);
-		chatTitle.setOpaque(false);
-		chatBox.add(chatTitle, BorderLayout.NORTH);
-		chatTitle.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setOpaque(false);
-		chatTitle.add(buttonPanel, BorderLayout.NORTH);
-
-		JButton friendButton = new RoundedButton("친구창", 20);
-		friendListModel = new DefaultListModel<>();
-		friendButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		friendButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		friendButton.setHorizontalTextPosition(SwingConstants.CENTER);
-		friendButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		friendButton.setBackground(new Color(102, 204, 0));
-		friendButton.setForeground(Color.WHITE);
-		buttonPanel.add(friendButton);
-
-		JButton chatButton = new RoundedButton("채팅창", 20);
-		chatListModel = new DefaultListModel<>();
-		chatButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		chatButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		chatButton.setHorizontalTextPosition(SwingConstants.CENTER);
-		chatButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
-		chatButton.setBackground(new Color(51, 153, 255));
-		chatButton.setForeground(Color.WHITE);
-
-		JPanel card1 = new JPanel();
-		card1.setOpaque(false);
-		card1.setBackground(Color.MAGENTA);
-		card1.setLayout(new BoxLayout(card1, BoxLayout.Y_AXIS));
-
-		JPanel card2 = new JPanel();
-		card2.setOpaque(false);
-		card2.setBackground(Color.BLUE);
-
-		cardPanel.add(card1, "Card 1");
-		cardPanel.add(card2, "Card 2");
-
-		JPanel contentPanel1 = new JPanel();
-		contentPanel1.setOpaque(false);
-		card1.add(contentPanel1);
-		card2.setLayout(new BorderLayout(0, 0));
-
-		JPanel contentPanel2 = new JPanel();
-		contentPanel2.setOpaque(false);
-		card2.add(contentPanel2);
-		contentPanel2.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-
-		cvlist = cm.selectChat(id);
-
-		chatListModel.clear(); // 기존 데이터를 제거합니다
-
-		for (int i = 0; i < cvlist.size(); i++) {
-			if (cvlist.get(i) != null) {
-				String str = cvlist.get(i).getChatroom_name();
-				chatListModel.addElement(str); // 새로운 데이터 추가
-			}
-		}
-		JList<String> chatList = new JList(chatListModel);
-		chatList.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
-
-		contentPanel2.add(chatList);
-
-		JPanel addChatPanel = new JPanel();
-		addChatPanel.setOpaque(false);
-		addChatPanel.setFont(new Font("맑은 고딕", Font.BOLD, 12));
-		card2.add(addChatPanel, BorderLayout.SOUTH);
-		addChatPanel.setLayout(new BorderLayout(0, 0));
-
-		JButton addChatButton = new RoundedButton("채팅생성", 20);
-		addChatButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		addChatButton.setFont(new Font("맑은 고딕", Font.BOLD, 12));
-		addChatButton.setBackground(new Color(51, 153, 255));
-		addChatButton.setForeground(Color.WHITE);
-		addChatPanel.add(addChatButton);
-
-		contentPanel1.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+	private JPanel createFriendPanel() {
+		JPanel friendContentPanel = new JPanel();
+		friendContentPanel.setOpaque(false);
+		friendContentPanel.setLayout(new BoxLayout(friendContentPanel, BoxLayout.Y_AXIS));
 
 		emvlist = cm.selectEmployee(id);
-
+		Vector<String> svlist = new Vector<String>();
+		// 친구 목록을 테스트로 추가
 		for (int i = 0; i < emvlist.size(); i++) {
 			if (emvlist.get(i) != null) {
 				String str = emvlist.get(i).getName() + " " + emvlist.get(i).getPosition() + " ("
 						+ emvlist.get(i).getDepartment() + ")";
-				friendListModel.addElement(str);
+				svlist.add(str);
 
 				boolean flag = cm.chatCheck(id, emvlist.get(i).getId());
 
@@ -273,117 +447,29 @@ public class EmployeeMain {
 
 			}
 		}
-		JList<String> FriendList = new JList(friendListModel);
-		FriendList.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+		for (int i = 0; i < emvlist.size(); i++) {
+			JPanel friendPanel = new JPanel();
+			friendPanel.setBackground(Color.LIGHT_GRAY);
+			friendPanel.setMaximumSize(new Dimension(32767, 40));
+			friendPanel.setPreferredSize(new Dimension(10, 40));
+			friendPanel.setLayout(new GridLayout(0, 1, 0, 0));
+			friendContentPanel.add(friendPanel);
 
-		contentPanel1.add(FriendList);
+			String str = svlist.get(i);
+			int chat_no = cm.selectPrivateChat(id, emvlist.get(i).getId()).get(0).getChat_no();
+			JLabel friendLabel = new JLabel(str);
+			friendLabel.setBorder(new EmptyBorder(0, 10, 0, 0));
+			friendLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+			friendLabel.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(java.awt.event.MouseEvent e) {
 
-		// 친구 목록 만들기 끝 //
-		chatBox.add(cardPanel);
+					if (e.getClickCount() == 2) {
 
-		// Sizes
-		left.setPreferredSize(new Dimension(720, 600));
-		chatBox.setMaximumSize(new Dimension(450, 600));
-		upperLeft.setMaximumSize(new Dimension(700, 350));
-		downerLeft.setMaximumSize(new Dimension(700, 240));
-		calendarContainer.setMaximumSize(new Dimension(350, 350));
-		todoContainer.setMaximumSize(new Dimension(340, 350));
-		// appContainer.setMaximumSize(new Dimension(700,240));
-		appPanel.setMaximumSize(new Dimension(660, 200));
-
-		right.setPreferredSize(new Dimension(450, 600));
-		chatBox.setPreferredSize(new Dimension(430, 510));
-		appPanel.add(vacation);
-		appPanel.add(Box.createHorizontalStrut(20));
-		appPanel.add(date);
-		appPanel.add(Box.createHorizontalStrut(20));
-		appPanel.add(myPage);
-		appPanel.add(Box.createHorizontalStrut(20));
-		appPanel.add(ask);
-		appPanel.add(Box.createHorizontalStrut(20));
-		appPanel.add(todo);
-		appPanel.add(Box.createHorizontalStrut(20));
-		appPanel.add(work);
-		appPanel.add(Box.createHorizontalStrut(20));
-		appPanel.add(userCheck);
-		appPanel.add(Box.createHorizontalStrut(20));
-		appPanel.add(itemCheck);
-
-		calendarContainer.add(calendarPanel);
-		todoContainer.add(todoPanel);
-		appContainer.add(appPanel);
-
-		upperLeft.add(calendarContainer);
-		upperLeft.add(Box.createHorizontalStrut(10));
-		upperLeft.add(todoContainer);
-
-		// left.add(Box.createHorizontalStrut(10));
-		left.add(upperLeft);
-		left.add(appContainer);
-		left.add(Box.createHorizontalStrut(20));
-		left.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
-		right.setBorder(BorderFactory.createEmptyBorder(12, 0, 20, 20));
-		right.add(chatBox);
-		// left.add(Box.createHorizontalStrut(10));
-
-		mainPanel.add(left);
-		mainPanel.add(right);
-		// mainPanel.add(Box.createHorizontalStrut(10));
-
-		frame.add(mainPanel);
-		frame.setResizable(false);
-		frame.setVisible(true);
-
-		// 이벤트
-		friendButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Card 1");
-			}
-		});
-
-		buttonPanel.add(chatButton);
-		chatButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(cardPanel, "Card 2");
-			}
-		});
-
-		addChatButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							chatCreate frame = new chatCreate(id);
-							frame.setVisible(true);
-							frame.addWindowListener(new WindowAdapter() {
-								@Override
-								public void windowClosed(WindowEvent e) {
-									// 창이 닫힐 때 업데이트할 작업 수행
-									updateChatPanel();
-								}
-							});
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
-			}
-		});
-
-		chatList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) {
-					int index = chatList.getSelectedIndex();
-					if (index != -1) {
-						String chatRoomName = chatList.getSelectedValue();
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								try {
-									chatRoom frame = new chatRoom(cvlist.get(index).getChat_no(), chatRoomName, id);
+									chatRoom frame = new chatRoom(chat_no, str, id);
 									frame.setVisible(true);
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -392,87 +478,166 @@ public class EmployeeMain {
 						});
 					}
 				}
-			}
-		});
-
-		FriendList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) {
-					int selectedIndex = FriendList.getSelectedIndex();
-					if (selectedIndex == -1) {
-						return; // 아무 항목도 선택되지 않았을 때
-					}
-					emvlist = cm.selectEmployee(id);
-					System.out.println(emvlist.get(selectedIndex).getId());
-					System.out.println("성공");
-					String chatRoomName = FriendList.getSelectedValue();
-					int chat_no = cm.selectPrivateChat(id, emvlist.get(selectedIndex).getId()).get(0).getChat_no();
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							try {
-								chatRoom frame = new chatRoom(chat_no, chatRoomName, id);
-								frame.setVisible(true);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					});
-				}
-			}
-		});
-
+			});
+			friendPanel.add(friendLabel);
+		}
+		return friendContentPanel;
 	}
 
+	// 채팅 목록 패널 생성
+	private JPanel createChatPanel() {
+		JPanel chatContentPanel = new JPanel();
+		chatContentPanel.setOpaque(false);
+		chatContentPanel.setLayout(new BoxLayout(chatContentPanel, BoxLayout.Y_AXIS));
+
+		// 채팅 목록을 테스트로 추가
+		cvlist = cm.selectChat(id);
+
+		for (int i = 0; i < cvlist.size(); i++) {
+			JPanel chatRoomPanel = new JPanel();
+			chatRoomPanel.setBackground(Color.LIGHT_GRAY);
+			chatRoomPanel.setMaximumSize(new Dimension(32767, 40));
+			chatRoomPanel.setPreferredSize(new Dimension(10, 40));
+			chatRoomPanel.setLayout(new GridLayout(0, 1, 0, 0));
+			chatContentPanel.add(chatRoomPanel);
+
+			String str = cvlist.get(i).getChatroom_name();
+			int chat_no = cvlist.get(i).getChat_no();
+			JLabel whoLabel = new JLabel(str);
+			whoLabel.setBorder(new EmptyBorder(0, 10, 0, 0));
+			whoLabel.setFont(new Font("맑은 고딕", Font.BOLD, 14));
+
+			whoLabel.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(java.awt.event.MouseEvent e) {
+					if (e.getClickCount() == 2) {
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									chatRoom frame = new chatRoom(chat_no, str, id);
+									frame.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
+					}
+				}
+			});
+			chatRoomPanel.add(whoLabel);
+		}
+		return chatContentPanel;
+	}
+
+	// JScrollPane 생성
+	private JScrollPane createScrollPane(JPanel contentPanel) {
+		JScrollPane scrollPane = new JScrollPane(contentPanel);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setBorder(new EmptyBorder(0, 0, 15, 0));
+		scrollPane.setOpaque(false);
+
+		JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+		verticalScrollBar.setPreferredSize(new Dimension(0, 0)); // 크기를 0으로 설정
+		verticalScrollBar.setUI(new CustomScrollBarUI()); // 사용자 정의 UI 설정
+
+		return scrollPane;
+	}
+
+	// 할 일 패널 추가
 	public void updateTodoPanel() {
-		// 할일 목록 받아오기 (예시: DBMgr를 통해)
-		Vector<TodoBean> todoList = db.selectTodo("asdf123"); // 이 부분은 실제 DB 호출로 수정 필요
+		vlist = db.selectTodo(id);
 
-		// 기존 할일 항목 제거
-		todoPanel.removeAll();
+		for (int i = 0; i < vlist.size(); i++) {
+			newPanel = new JPanel();
+			newPanel.setOpaque(false);
+			newPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-		// 새로운 할일 항목 추가
-		TodoTitle.setLayout(new BoxLayout(TodoTitle, BoxLayout.X_AXIS));
-		TodolistLabel.setFont(new Font("돋움", Font.BOLD, 24));
-		TodoTitle.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-		TodoTitle.add(TodolistLabel);
-		TodoTitle.add(Box.createHorizontalStrut(200));
-		todoPanel.add(TodoTitle);
+			newJLabel = new JLabel("● " + vlist.get(i).getTodo_contents());
+			newJLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
 
-		for (TodoBean item : todoList) {
-			stringContainer = new JTextArea();
-			stringContainer.setEditable(false);
-			stringContainer.setFocusable(false);
-			stringContainer.setText(" ● " + item);
-			todoPanel.add(stringContainer);
+			newPanel.add(newJLabel);
+			contentPanel.add(newPanel);
 		}
 
-		// 패널 업데이트
-		todoPanel.revalidate();
-		todoPanel.repaint();
+		contentPanel.revalidate();
+		contentPanel.repaint();
 	}
 
 	private void updateChatPanel() {
-		// 채팅 리스트 모델 및 JList 생성
-		cvlist = cm.selectChat(id);
+		// 현재 표시 중인 패널의 이름을 가져오기
+		CardLayout cardLayout = (CardLayout) cardPanel.getLayout();
 
-		// 채팅 리스트 모델 초기화
-		chatListModel.clear(); // 기존 데이터를 제거합니다
+		// 채팅 패널만 업데이트
+		JPanel chatPanel = createChatPanel();
 
-		for (int i = 0; i < cvlist.size(); i++) {
-			if (cvlist.get(i) != null) {
-				String str = cvlist.get(i).getChatroom_name();
-				chatListModel.addElement(str); // 새로운 데이터 추가
+		// 기존 ChatPanel을 찾아서 교체
+		for (Component comp : cardPanel.getComponents()) {
+			if (comp.getName() != null && comp.getName().equals("ChatPanel")) {
+				// 기존 패널을 교체
+				cardPanel.remove(comp);
+				break;
 			}
 		}
 
-		// 변경 사항을 반영
-		frame.revalidate();
-		frame.repaint();
+		// 새로 생성된 chatPanel을 추가 (스크롤 가능하게 처리)
+		JScrollPane chatScrollPane = createScrollPane(chatPanel);
+		chatScrollPane.setName("ChatPanel");
+		cardPanel.add(chatScrollPane, "ChatPanel");
+
+		// 레이아웃 재계산 및 화면 갱신
+		cardPanel.revalidate();
+		cardPanel.repaint();
+
+		// ChatPanel로 다시 전환
+		cardLayout.show(cardPanel, "ChatPanel");
 	}
 
+	// 이벤트
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object obj = e.getSource();
+		if (obj == vacationButton) {
+			Vacation vaca = new Vacation();
+			vaca.setId(id);
+			new Vacation();
+		} else if (obj == dateButton) {
+			if (db.CheckManagerEmployee(id)) {
+				NoticeCreate nc = new NoticeCreate();
+				nc.setId(id);
+			}
+			else {
+				NoticeView nv = new NoticeView();
+				nv.setId(id);
+			}
+		} else if (obj == myPageButton) {
+			MyPage mypage = new MyPage();
+			mypage.setEm_id(id);
+		} else if (obj == QAButton) {
+			QACheck qa = new QACheck(id);
+		} else if (obj == todoButton) {
+			ToDoList todo = new ToDoList();
+			todo.setEm_id(id);
+		}  else if (obj == graphButton) {
+
+		} else if (obj == countButton) {
+
+		}
+	}
+
+	/**
+	 * Launch the application.
+	 */
 	public static void main(String[] args) {
-		new EmployeeMain();
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					EmployeeMain frame = new EmployeeMain();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 }

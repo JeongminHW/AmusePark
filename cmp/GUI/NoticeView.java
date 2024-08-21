@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+
 import java.awt.FlowLayout;
 import java.awt.Dimension;
 import java.awt.Component;
@@ -15,25 +17,19 @@ import java.awt.Font;
 import java.awt.BorderLayout;
 
 public class NoticeView extends JFrame {
+	
+	static String id;
+
+	public static String getId() {
+		return id;
+	}
+
+	public static void setId(String id) {
+		NoticeView.id = id;
+	}
 
 	private static final long serialVersionUID = 1L;
 	private JPanel mainPanel;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					NoticeView frame = new NoticeView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
@@ -41,6 +37,7 @@ public class NoticeView extends JFrame {
 	public NoticeView() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 650, 300);
+		setVisible(true);
 		mainPanel = new JPanel();
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		mainPanel.setBackground(Color.WHITE);
@@ -96,6 +93,27 @@ public class NoticeView extends JFrame {
 		dateExample1Label.setAlignmentX(Component.CENTER_ALIGNMENT);
 		dateExample1Label.setFont(new Font("맑은 고딕", Font.PLAIN, 12));
 		contentPanel.add(dateExample1Label);
+		
+		JButton backButton = new RoundedButton("뒤로",20);
+		backButton.setLocation(200, 200);
+		rightPanel.add(backButton, BorderLayout.SOUTH);
 	}
+	
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					NoticeView frame = new NoticeView();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
 
 }

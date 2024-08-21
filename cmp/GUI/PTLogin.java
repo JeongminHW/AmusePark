@@ -1,4 +1,4 @@
-package GUI;
+package cmp.GUI;
 //디자인 변경 완
 
 import java.awt.Color;
@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import DB.*;
+import cmp.DB.*;
 
 public class PTLogin implements ActionListener, MouseListener{
 	DBMgr db = new DBMgr();
@@ -133,9 +133,9 @@ public class PTLogin implements ActionListener, MouseListener{
         	String pw = new String(PwField.getPassword());
         	if(db.LoginCheckAlba(id, pw)) {
         		System.out.println("로그인 성공");
-        		AlbaMain albamain = new AlbaMain();
+        		AlbaMain albamain = new AlbaMain(id);
 				albamain.setId(id);
-				new AlbaMain();
+				albamain.setVisible(true);
 				frame.dispose();
         	}
         	else {

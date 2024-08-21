@@ -1,4 +1,4 @@
-package GUI;
+package cmp.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -25,8 +25,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 
-import org.xnio.channels.SslChannel;
-
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,15 +35,12 @@ import java.awt.Component;
 import java.awt.ComponentOrientation;
 import javax.swing.DefaultComboBoxModel;
 
-import DB.*;
+import cmp.DB.*;
+
 import java.util.*;
 
 public class Vacation extends JFrame implements ActionListener {
 	static String id;
-
-	public static String getId() {
-		return id;
-	}
 
 	public static void setId(String id) {
 		Vacation.id = id;
@@ -121,6 +116,7 @@ public class Vacation extends JFrame implements ActionListener {
 	public Vacation() throws ParseException {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 400);
+		setVisible(true);
 		mainPanel = new JPanel();
 		mainPanel.setBackground(new Color(255, 255, 255));
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -348,7 +344,7 @@ public class Vacation extends JFrame implements ActionListener {
 		}
 
 		// 휴가 일수
-		vlist = db.TotalVacation("asdf123");
+		vlist = db.TotalVacation(id);
 		System.out.println(vlist.get(0).getUsable_vacation());
 		int Totalvacation = vlist.get(0).getUsable_vacation();
 		lblNewLabel_4.setText("남은 휴가 : " + Integer.toString(Totalvacation));
@@ -558,7 +554,8 @@ public class Vacation extends JFrame implements ActionListener {
 		if (obj == cancelButton) {
 			dispose();
 		} else if (obj == confirmButton) {
-			if(!Syear.equals("선택") && !Smonth.equals("선택") && !Sday.equals("선택") && !Eyear.equals("선택") && !Emonth.equals("선택") && !Eday.equals("선택")) {
+			if (!Syear.equals("선택") && !Smonth.equals("선택") && !Sday.equals("선택") && !Eyear.equals("선택")
+					&& !Emonth.equals("선택") && !Eday.equals("선택")) {
 				try {
 					from = simpleDateFormat.parse(strDate);
 					to = simpleDateFormat.parse(endDate);
@@ -573,7 +570,7 @@ public class Vacation extends JFrame implements ActionListener {
 					JOptionPane.showMessageDialog(null, "휴가 시작일과 종료일을 선택해주세요.", "휴가 신청", JOptionPane.ERROR_MESSAGE);
 				}
 				VacationBean bean = new VacationBean();
-				bean.setId("asdf123");
+				bean.setId(id);
 				bean.setStart(strDate);
 				bean.setEnd(endDate);
 				bean.setReason(vacationReasonTextfield.getText());

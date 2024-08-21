@@ -1,4 +1,4 @@
-package GUI;
+package cmp.GUI;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import DB.*;
+import cmp.DB.*;
 
 public class EmLogin implements ActionListener, MouseListener {
 	DBMgr db = new DBMgr();

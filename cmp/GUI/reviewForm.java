@@ -34,6 +34,7 @@ public class reviewForm implements ActionListener {
 		this.bean = bean;
 		frame = new JFrame("문의사항 검토");
 		frame.setSize(600, 400);
+		frame.setVisible(true);
 
 		p1 = new Panel(new GridLayout(4, 1));
 		p2 = new Panel(new GridLayout(1, 2));

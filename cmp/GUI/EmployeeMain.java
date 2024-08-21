@@ -92,23 +92,17 @@ public class EmployeeMain extends JFrame implements ActionListener {
 	ImageIcon mypage_icon = new ImageIcon("./cmp/IMG/user_img.png");
 	ImageIcon todo_icon = new ImageIcon("./cmp/IMG/todo_img.png");
 	ImageIcon ask_icon = new ImageIcon("./cmp/IMG/question_img.png");
-	ImageIcon userCheck_icon = new ImageIcon("./cmp/IMG/park_img.png");
-	ImageIcon itemCheck_icon = new ImageIcon("./cmp/IMG/manage_img.png");
 	ImageIcon chat_icon = new ImageIcon("./cmp/IMG/chat_img.png");
 	JButton vacationButton = new RoundedButton(vacation_icon, 20);
 	JButton dateButton = new RoundedButton(date_icon, 20);
 	JButton myPageButton = new RoundedButton(mypage_icon, 20);
 	JButton QAButton = new RoundedButton(ask_icon, 20);
 	JButton todoButton = new RoundedButton(todo_icon, 20);
-	JButton graphButton = new RoundedButton(userCheck_icon, 20);
-	JButton countButton = new RoundedButton(itemCheck_icon, 20);
 	JLabel vacationLabel = new JLabel("휴가");
 	JLabel dateLabel = new JLabel("일정");
 	JLabel myPageLabel = new JLabel("마이페이지");
 	JLabel QALabel = new JLabel("문의사항");
 	JLabel todoLabel = new JLabel("할일");
-	JLabel graphLabel = new JLabel("사용자 집계");
-	JLabel countLabel = new JLabel("물품관리");
 
 	/**
 	 * Create the frame.
@@ -271,45 +265,6 @@ public class EmployeeMain extends JFrame implements ActionListener {
 		todoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		appPanel_4.add(todoLabel);
 
-		JPanel appPanel_5 = new JPanel();
-		appPanel_5.setOpaque(false);
-		appContainer.add(appPanel_5);
-		appPanel_5.setLayout(new BoxLayout(appPanel_5, BoxLayout.Y_AXIS));
-
-		JPanel appPanel_6 = new JPanel();
-		appPanel_6.setOpaque(false);
-		appContainer.add(appPanel_6);
-		appPanel_6.setLayout(new BoxLayout(appPanel_6, BoxLayout.Y_AXIS));
-
-		graphButton.setBackground(Color.white);
-		graphButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		graphButton.setMaximumSize(new Dimension(40, 40));
-		graphButton.setPreferredSize(new Dimension(40, 40));
-		graphButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		appPanel_6.add(graphButton);
-
-		graphLabel.setBorder(new EmptyBorder(5, 0, 0, 0));
-		graphLabel.setFont(new Font("맑은 고딕", Font.BOLD, 12));
-		graphLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		appPanel_6.add(graphLabel);
-
-		JPanel appPanel_7 = new JPanel();
-		appPanel_7.setOpaque(false);
-		appContainer.add(appPanel_7);
-		appPanel_7.setLayout(new BoxLayout(appPanel_7, BoxLayout.Y_AXIS));
-
-		countButton.setBackground(Color.white);
-		countButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		countButton.setMaximumSize(new Dimension(40, 40));
-		countButton.setPreferredSize(new Dimension(40, 40));
-		countButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		appPanel_7.add(countButton);
-
-		countLabel.setBorder(new EmptyBorder(5, 0, 0, 0));
-		countLabel.setFont(new Font("맑은 고딕", Font.BOLD, 12));
-		countLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		appPanel_7.add(countLabel);
-
 		CentralDropShadowPanel ChatingPanel = new CentralDropShadowPanel(Color.LIGHT_GRAY, 30);
 		ChatingPanel.setBackground(Color.WHITE);
 		GridBagConstraints gbc_ChatingPanel = new GridBagConstraints();
@@ -397,8 +352,6 @@ public class EmployeeMain extends JFrame implements ActionListener {
 		myPageButton.addActionListener(this);
 		QAButton.addActionListener(this);
 		todoButton.addActionListener(this);
-		graphButton.addActionListener(this);
-		countButton.addActionListener(this);
 
 		updateTodoPanel();
 	}
@@ -617,10 +570,6 @@ public class EmployeeMain extends JFrame implements ActionListener {
 		} else if (obj == todoButton) {
 			ToDoList todo = new ToDoList();
 			todo.setEm_id(id);
-		}  else if (obj == graphButton) {
-
-		} else if (obj == countButton) {
-
 		}
 	}
 

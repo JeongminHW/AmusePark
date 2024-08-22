@@ -1,4 +1,4 @@
-package GUI;
+package cmp.GUI;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 
-import DB.*;
+import cmp.DB.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -106,6 +106,7 @@ public class Alba_Substitute extends JFrame {
 	JComboBox whoComboBox = new JComboBox<>();
 	JButton confirmButton = new RoundedButton("확인", 25);
 	
+	JFrame frame = new JFrame("Deta Frame");
 
 	/**
 	 * Create the frame.
@@ -644,13 +645,13 @@ public class Alba_Substitute extends JFrame {
                      statement.setString(3, startDate);
                      statement.setString(4, endDate);
                      statement.executeUpdate();
-                     JOptionPane.showMessageDialog(null, "대타 신청이 완료되었습니다.");
+                     JOptionPane.showMessageDialog(frame, "대타 신청이 완료되었습니다.");
                  } else {
-                     JOptionPane.showMessageDialog(null, "입력한 이름의 알바가 존재하지 않습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+                     JOptionPane.showMessageDialog(frame, "입력한 이름의 알바가 존재하지 않습니다.", "오류", JOptionPane.ERROR_MESSAGE);
                  }
              } catch (SQLException ex) {
                  ex.printStackTrace();
-                 JOptionPane.showMessageDialog(null, "다시 시도해주세요" , "오류", JOptionPane.ERROR_MESSAGE);
+                 JOptionPane.showMessageDialog(frame, "다시 시도해주세요" , "오류", JOptionPane.ERROR_MESSAGE);
              } catch (Exception e1) {
 					e1.printStackTrace();
 				} finally {
@@ -674,7 +675,7 @@ public class Alba_Substitute extends JFrame {
              }
          }
      });
-     setVisible(true);
+     frame.setVisible(true);
 }
 	
 	 private static void loadSubstituteNames(JComboBox<String> comboBox) throws Exception {

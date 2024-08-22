@@ -136,6 +136,7 @@ public class MyPage implements ActionListener {
 	// 직원 정보 불러오기
 	private void loadEmployeeInfo(String id) {
 		Embean = db.listEmployee(id);
+		Embean.setId(id);
 		nameField.setText(Embean.getName());
 		phoneField.setText(Embean.getPhone());
 		positionField.setText(Embean.getPosition());
@@ -145,6 +146,7 @@ public class MyPage implements ActionListener {
 	private void loadAlba(String id) {
 		Albabean = db.listAlba(id);
 		Ptbean = db.infoParttime(id);
+		Albabean.setid(id);
 		nameField.setText(Albabean.getname());
 		phoneField.setText(Albabean.getphone());
 		positionField.setText(Albabean.getPart_time());

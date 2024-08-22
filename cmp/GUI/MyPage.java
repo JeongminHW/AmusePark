@@ -73,7 +73,7 @@ public class MyPage implements ActionListener {
 			loadAlba(alba_id);
 			Form(alba_id);
 			positionLabel.setText("파트타임");
-			positionLabel.setText("시간");
+			adminLabel.setText("시간");
 			partTimeClock.setEnabled(false);
 			mainPanel.remove(adminCheckBox);
 			mainPanel.add(partTimeClock, 15);
@@ -86,13 +86,6 @@ public class MyPage implements ActionListener {
 			// 정보 불러오기
 			loadEmployeeInfo(em_id);
 			Form(em_id);
-
-			// 매니저 여부 체크
-			if (db.CheckManagerEmployee(em_id)) {
-				adminCheckBox.setSelected(true);
-			} else {
-				adminCheckBox.setSelected(false);
-			}
 		}
 
 	}
@@ -101,7 +94,7 @@ public class MyPage implements ActionListener {
 		idField.setText(id);
 		idField.setEnabled(false);
 		idField.setForeground(Color.black);
-		// positionField.setEnabled(false);
+		positionField.setEnabled(false);
 
 		adminCheckBox.setBackground(Color.white);
 
@@ -135,8 +128,9 @@ public class MyPage implements ActionListener {
 		frame.setVisible(true);
 
 		/*
-		 * if(frame.getTitle().equals("마이페이지 - ")) { frame.dispose(); }
+		 * if (frame.getTitle().equals("마이페이지 - null")) { frame.dispose(); }
 		 */
+
 	}
 
 	// 직원 정보 불러오기
@@ -180,7 +174,8 @@ public class MyPage implements ActionListener {
 				} else {
 					JOptionPane.showMessageDialog(null, "비밀번호가 다릅니다.", "수정", JOptionPane.ERROR_MESSAGE);
 				}
-			} else if (!oldpw.equals("") && !newpw.equals("") && !pwChk.equals("") && positionLabel.getText().equals("파트타임")) { // 알바
+			} else if (!oldpw.equals("") && !newpw.equals("") && !pwChk.equals("")
+					&& positionLabel.getText().equals("파트타임")) { // 알바
 				if (newpw.equals(pwChk)) {
 					Albabean.setpw(pwChk);
 					Albabean.setname(name);

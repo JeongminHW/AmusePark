@@ -121,45 +121,6 @@ public class DBMgr {
 		return flag;
 	}
 
-	// 관리자 부여
-	public boolean ManagerEmployee(String id) {
-		boolean flag = false;
-		try {
-			con = pool.getConnection();
-			sql = "update employee set em_manage = '관리자' where em_id = ?";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, id);
-			pstmt.executeUpdate();
-			if (pstmt.executeUpdate() == 1)
-				flag = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
-		}
-		return flag;
-	}
-
-	// 관리자 해제
-	public boolean NonManagerEmployee(String id) {
-		boolean flag = false;
-		try {
-			con = pool.getConnection();
-			sql = "update employee set em_manage = '' where em_id = ?;";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, id);
-			pstmt.executeUpdate();
-			if (pstmt.executeUpdate() == 1) {
-				flag = true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			pool.freeConnection(con, pstmt, rs); // con는 반납, pstmt/rs는 close
-		}
-		return flag;
-	}
-
 	// 직원 직급에 따른 휴가 일수 부여
 	public boolean VacationEmployee(EmployeeBean bean) {
 		boolean flag = false;
@@ -750,13 +711,12 @@ public class DBMgr {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "update employee set em_pw = ?, em_name = ?, em_phone = ?, em_position = ? where em_id = ?";
+			sql = "update employee set em_pw = ?, em_name = ?, em_phone = ? where em_id = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, bean.getPw());
 			pstmt.setString(2, bean.getName());
 			pstmt.setString(3, bean.getPhone());
-			pstmt.setString(4, bean.getPosition());
-			pstmt.setString(5, bean.getId());
+			pstmt.setString(4, bean.getId());
 			pstmt.executeUpdate();
 			if (pstmt.executeUpdate() == 1)
 				flag = true;
@@ -816,13 +776,12 @@ public class DBMgr {
 		boolean flag = false;
 		try {
 			con = pool.getConnection();
-			sql = "update alba set alba_pw = ?, alba_name = ?, alba_phone = ?, parttime = ? where alba_id = ?";
+			sql = "update alba set alba_pw = ?, alba_name = ?, alba_phone = ? where alba_id = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, bean.getpw());
 			pstmt.setString(2, bean.getname());
 			pstmt.setString(3, bean.getphone());
-			pstmt.setString(4, bean.getPart_time());
-			pstmt.setString(5, bean.getid());
+			pstmt.setString(4, bean.getid());
 			pstmt.executeUpdate();
 			if (pstmt.executeUpdate() == 1)
 				flag = true;

@@ -207,6 +207,7 @@ public class QACheck extends JFrame {
 
 				QACheck frame = new QACheck("qwer111");
 				rf = new reviewForm(bean, frame);
+				dispose();
 			}
 		});
 	}

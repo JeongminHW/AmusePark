@@ -127,9 +127,9 @@ public class MyPage implements ActionListener {
 		frame.add(mainPanel);
 		frame.setVisible(true);
 
-		/*
-		 * if (frame.getTitle().equals("마이페이지 - null")) { frame.dispose(); }
-		 */
+		if (frame.getTitle().equals("마이페이지 - null")) {
+			frame.dispose();
+		}
 
 	}
 

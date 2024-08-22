@@ -508,6 +508,7 @@ public class NoticeCreate extends JFrame {
 				new EmployeeMain();
 			}
 		});
+		
 	}
 
 	private void saveSchedule() throws HeadlessException, Exception {

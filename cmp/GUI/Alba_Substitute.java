@@ -37,8 +37,18 @@ import javax.swing.LookAndFeel;
 
 public class Alba_Substitute extends JFrame {
 
-    private static DBConnectionMgr dbConnectionMgr = DBConnectionMgr.getInstance();
-	
+	static String id;
+
+	public static String getId() {
+		return id;
+	}
+
+	public static void setId(String id) {
+		Alba_Substitute.id = id;
+	}
+
+	private static DBConnectionMgr dbConnectionMgr = DBConnectionMgr.getInstance();
+
 	static final long serialVersionUID = 1L;
 	JPanel mainPanel;
 	JPanel upperPanel;
@@ -96,6 +106,7 @@ public class Alba_Substitute extends JFrame {
 	JLabel dateEDayLabel = new JLabel("일 까지");
 	JLabel whoLabel = new JLabel("대상");
 	JLabel dateReasonLabel = new JLabel("사유");
+	JButton closeButton;
 
 	JComboBox dateSYearComboBox = new JComboBox<>();
 	JComboBox dateSMonthComboBox = new JComboBox<>();
@@ -105,17 +116,16 @@ public class Alba_Substitute extends JFrame {
 	JComboBox dateEDayComboBox = new JComboBox<>();
 	JComboBox whoComboBox = new JComboBox<>();
 	JButton confirmButton = new RoundedButton("확인", 25);
-	
-	JFrame frame = new JFrame("Deta Frame");
 
 	/**
 	 * Create the frame.
-	 * @throws Exception 
+	 * 
 	 */
-	public Alba_Substitute() throws Exception {
+	public Alba_Substitute() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1050, 500);
 		setVisible(true);
+		setTitle("알바 대타 신청 - " + id);
 		mainPanel = new JPanel();
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		mainPanel.setBackground(Color.WHITE);
@@ -525,7 +535,7 @@ public class Alba_Substitute extends JFrame {
 		whoPanel.setOpaque(false);
 		whoPanel.setLayout(new BoxLayout(whoPanel, BoxLayout.Y_AXIS));
 
-        loadSubstituteNames(whoComboBox); // 콤보박스에 알바 이름 로드
+		loadSubstituteNames(whoComboBox); // 콤보박스에 알바 이름 로드
 		whoComboBox.setFont(new Font("맑은 고딕", Font.PLAIN, 12));
 		whoComboBox.setFocusable(false);
 		whoPanel.add(whoComboBox);
@@ -579,8 +589,7 @@ public class Alba_Substitute extends JFrame {
 		downerPanel.add(dateReasonContentPanel);
 		dateReasonContentPanel.setLayout(new BorderLayout(0, 0));
 
-		dateReasonContentContainer.setBorder(new EmptyBorder(0, 10, 0, 40)
-				);
+		dateReasonContentContainer.setBorder(new EmptyBorder(0, 10, 0, 40));
 		dateReasonContentContainer.setOpaque(false);
 		dateReasonContentPanel.add(dateReasonContentContainer, BorderLayout.CENTER);
 		dateReasonContentContainer.setLayout(new BoxLayout(dateReasonContentContainer, BoxLayout.Y_AXIS));
@@ -595,135 +604,152 @@ public class Alba_Substitute extends JFrame {
 		longlinePanel.setOpaque(false);
 		dateReasonContentContainer.add(longlinePanel);
 
+		JPanel btnPanel = new JPanel();
+		btnPanel.setBackground(Color.white);
+
+		closeButton = new RoundedButton("닫기", 25);
+		btnPanel.add(closeButton);
+
 		confirmButton.setFont(new Font("맑은 고딕", Font.BOLD, 12));
-		dateReasonContentPanel.add(confirmButton, BorderLayout.EAST);
 		confirmButton.setBackground(new Color(0, 148, 255));
 		confirmButton.setForeground(Color.WHITE);
+		btnPanel.add(confirmButton, BorderLayout.EAST);
 
+		dateReasonContentPanel.add(btnPanel, BorderLayout.EAST);
 		System.out.println(upperLeftPanel.getHeight());
 
-	 confirmButton.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-             String yearFromStr = (String) dateSYearComboBox.getSelectedItem();
-             String monthFromStr = (String) dateSMonthComboBox.getSelectedItem();
-             String dayFromStr = (String) dateSDayComboBox.getSelectedItem();
-             String yearToStr = (String) dateEYearComboBox.getSelectedItem();
-             String monthToStr = (String)dateEMonthComboBox.getSelectedItem();
-             String dayToStr = (String) dateEDayComboBox.getSelectedItem();
-             String substituteName = (String) whoComboBox.getSelectedItem();
-             String reason = dateReasonTextField.getText();
+		closeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
 
-             String startDate = String.format("%s-%s-%s 00:00:00", yearFromStr, monthFromStr, dayFromStr);
-             String endDate = String.format("%s-%s-%s 23:59:59", yearToStr, monthToStr, dayToStr);
+		confirmButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String yearFromStr = (String) dateSYearComboBox.getSelectedItem();
+				String monthFromStr = (String) dateSMonthComboBox.getSelectedItem();
+				String dayFromStr = (String) dateSDayComboBox.getSelectedItem();
+				String yearToStr = (String) dateEYearComboBox.getSelectedItem();
+				String monthToStr = (String) dateEMonthComboBox.getSelectedItem();
+				String dayToStr = (String) dateEDayComboBox.getSelectedItem();
+				String substituteName = (String) whoComboBox.getSelectedItem();
+				String reason = dateReasonTextField.getText();
 
-             Connection connection = null;
-             PreparedStatement statement = null;
-             ResultSet resultSet = null;
+				String startDate = String.format("%s-%s-%s 00:00:00", yearFromStr, monthFromStr, dayFromStr);
+				String endDate = String.format("%s-%s-%s 23:59:59", yearToStr, monthToStr, dayToStr);
 
-             try {
-                 connection = dbConnectionMgr.getConnection();
+				Connection connection = null;
+				PreparedStatement statement = null;
+				ResultSet resultSet = null;
 
-                 // 알바 이름으로 아이디 찾기
-                 String getIdSql = "SELECT alba_id FROM alba WHERE alba_name = ?";
-                 statement = connection.prepareStatement(getIdSql);
-                 statement.setString(1, substituteName);
-                 resultSet = statement.executeQuery();
+				try {
+					connection = dbConnectionMgr.getConnection();
 
-                 String substituteId = null;
-                 if (resultSet.next()) {
-                     substituteId = resultSet.getString("alba_id");
-                 }
+					// 알바 이름으로 아이디 찾기
+					String getIdSql = "SELECT alba_id FROM alba WHERE alba_name = ?";
+					statement = connection.prepareStatement(getIdSql);
+					statement.setString(1, substituteName);
+					resultSet = statement.executeQuery();
 
-                 if (substituteId != null) {
-                     // 대타 신청 저장
-                     String insertSql = "INSERT INTO alba_substitute (req_alba_id, sub_alba_id, sub_start, sub_end) VALUES (?, ?, ?, ?)";
-                     statement.close(); // 기존의 PreparedStatement를 닫습니다.
-                     statement = connection.prepareStatement(insertSql);
-                     statement.setString(1, "aaa"); // 신청자 id(임시)
-                     statement.setString(2, substituteId);
-                     statement.setString(3, startDate);
-                     statement.setString(4, endDate);
-                     statement.executeUpdate();
-                     JOptionPane.showMessageDialog(frame, "대타 신청이 완료되었습니다.");
-                 } else {
-                     JOptionPane.showMessageDialog(frame, "입력한 이름의 알바가 존재하지 않습니다.", "오류", JOptionPane.ERROR_MESSAGE);
-                 }
-             } catch (SQLException ex) {
-                 ex.printStackTrace();
-                 JOptionPane.showMessageDialog(frame, "다시 시도해주세요" , "오류", JOptionPane.ERROR_MESSAGE);
-             } catch (Exception e1) {
-					e1.printStackTrace();
+					String substituteId = null;
+					if (resultSet.next()) {
+						substituteId = resultSet.getString("alba_id");
+					}
+
+					if (substituteId != null) {
+						// 대타 신청 저장
+						String insertSql = "INSERT INTO alba_substitute (req_alba_id, sub_alba_id, sub_start, sub_end) VALUES (?, ?, ?, ?)";
+						statement.close(); // 기존의 PreparedStatement를 닫습니다.
+						statement = connection.prepareStatement(insertSql);
+						statement.setString(1, id); // 신청자 id(임시)
+						statement.setString(2, substituteId);
+						statement.setString(3, startDate);
+						statement.setString(4, endDate);
+						statement.executeUpdate();
+						JOptionPane.showMessageDialog(null, "대타 신청이 완료되었습니다.", "대타 신청", JOptionPane.PLAIN_MESSAGE);
+						dispose();
+					} else {
+						JOptionPane.showMessageDialog(null, "입력한 이름의 알바가 존재하지 않습니다.", "대타 신청",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(null, "다시 시도해주세요", "대타 신청", JOptionPane.ERROR_MESSAGE);
 				} finally {
-                 if (resultSet != null) {
-                     try {
-                         resultSet.close();
-                     } catch (SQLException ex) {
-                         ex.printStackTrace();
-                     }
-                 }
-                 if (statement != null) {
-                     try {
-                         statement.close();
-                     } catch (SQLException ex) {
-                         ex.printStackTrace();
-                     }
-                 }
-                 if (connection != null) {
-                     dbConnectionMgr.freeConnection(connection, statement);
-                 }
-             }
-         }
-     });
-     frame.setVisible(true);
-}
-	
-	 private static void loadSubstituteNames(JComboBox<String> comboBox) throws Exception {
-	        Connection connection = null;
-	        PreparedStatement statement = null;
-	        ResultSet resultSet = null;
+					if (resultSet != null) {
+						try {
+							resultSet.close();
+						} catch (SQLException ex) {
+							ex.printStackTrace();
+						}
+					}
+					if (statement != null) {
+						try {
+							statement.close();
+						} catch (SQLException ex) {
+							ex.printStackTrace();
+						}
+					}
+					if (connection != null) {
+						dbConnectionMgr.freeConnection(connection, statement);
+					}
+				}
+			}
+		});
 
-	        try {
-	            connection = dbConnectionMgr.getConnection();
+		if (getTitle().equals("알바 대타 신청 - null")) {
+			dispose();
+		}
 
-	            // 알바 이름 목록을 가져오는 SQL 쿼리
-	            String sql = "SELECT alba_name FROM alba";
-	            statement = connection.prepareStatement(sql);
-	            resultSet = statement.executeQuery();
+	}
 
-	            List<String> names = new ArrayList<>();
-	            while (resultSet.next()) {
-	                names.add(resultSet.getString("alba_name"));
-	            }
+	private static void loadSubstituteNames(JComboBox<String> comboBox) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 
-	            // JComboBox에 알바 이름을 추가
-	            for (String name : names) {
-	                comboBox.addItem(name);
-	            }
-	        } catch (SQLException ex) {
-	            ex.printStackTrace();
-	        } finally {
-	            if (resultSet != null) {
-	                try {
-	                    resultSet.close();
-	                } catch (SQLException ex) {
-	                    ex.printStackTrace();
-	                }
-	            }
-	            if (statement != null) {
-	                try {
-	                    statement.close();
-	                } catch (SQLException ex) {
-	                    ex.printStackTrace();
-	                }
-	            }
-	            if (connection != null) {
-	                dbConnectionMgr.freeConnection(connection, statement);
-	            }
-	        }
-	    }
-	
-	
+		try {
+			connection = dbConnectionMgr.getConnection();
+
+			// 알바 이름 목록을 가져오는 SQL 쿼리
+			String sql = "SELECT alba_name FROM alba";
+			statement = connection.prepareStatement(sql);
+			resultSet = statement.executeQuery();
+
+			List<String> names = new ArrayList<>();
+			while (resultSet.next()) {
+				names.add(resultSet.getString("alba_name"));
+			}
+
+			// JComboBox에 알바 이름을 추가
+			for (String name : names) {
+				comboBox.addItem(name);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			if (resultSet != null) {
+				try {
+					resultSet.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+			if (connection != null) {
+				dbConnectionMgr.freeConnection(connection, statement);
+			}
+		}
+	}
+
 	/**
 	 * Launch the application.
 	 */

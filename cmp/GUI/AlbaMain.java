@@ -231,6 +231,7 @@ public class AlbaMain extends JFrame implements ActionListener {
 		appButton2.addActionListener(this);
 		appButton3.addActionListener(this);
 		appButton4.addActionListener(this);
+		appButton5.addActionListener(this);
 		logOut.addActionListener(this);
 
 		refreshQAList();
@@ -395,7 +396,12 @@ public class AlbaMain extends JFrame implements ActionListener {
 					appLabel4.setText("출근");
 				}
 			}
-		} else if (obj == logOut) {
+		} else if(obj == appButton5) {
+			Alba_Substitute as = new Alba_Substitute();
+			as.setId(id);
+			new Alba_Substitute();
+		}
+		else if (obj == logOut) {
 			dispose();
 			new PTLogin();
 		}

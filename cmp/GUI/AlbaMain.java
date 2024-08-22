@@ -372,7 +372,7 @@ public class AlbaMain extends JFrame implements ActionListener {
 			ToDoList todolist = new ToDoList();
 			todolist.setAlba_id(id);
 			new ToDoList();
-			setVisible(false);
+			dispose();
 		} else if (obj == appButton2) { // 일정 버튼
 			new NoticeView();
 		} else if (obj == appButton3) {

@@ -1,4 +1,4 @@
-package DB;
+package cmp.DB;
 
 /**
  * Copyright(c) 2001 iSavvix Corporation (http://www.isavvix.com/)
@@ -39,9 +39,9 @@ import java.util.Vector;
 public class DBConnectionMgr {
     private Vector connections = new Vector(10);
     private String _driver = "com.mysql.cj.jdbc.Driver",
-    _url = "",
-    _user = "",
-    _password = "";
+    _url = "jdbc:mysql://113.198.238.104:3306/amusepark?characterEncoding=UTF-8&serverTimezone=UTC",
+    _user = "root",
+    _password = "1234";
     
     private boolean _traceOn = false;
     private boolean initialized = false;

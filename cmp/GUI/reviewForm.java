@@ -1,5 +1,5 @@
 
-package cmp.GUI;
+package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
@@ -18,7 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import cmp.DB.*;
+import DB.*;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.awt.Font;

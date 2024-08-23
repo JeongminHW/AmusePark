@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 
-import cmp.DB.*;
+import DB.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -172,50 +172,6 @@ public class Alba_Substitute extends JFrame {
 		upperRightPanel.add(dateContentPanelContainer);
 		dateContentPanelContainer.setLayout(new BoxLayout(dateContentPanelContainer, BoxLayout.Y_AXIS));
 
-		dateContent1 = new JPanel();
-		dateContent1.setOpaque(false);
-		dateContent1.setMaximumSize(new Dimension(32767, 40));
-		fl_dateContent1 = (FlowLayout) dateContent1.getLayout();
-		fl_dateContent1.setAlignment(FlowLayout.LEFT);
-		dateContentPanelContainer.add(dateContent1);
-
-		lblNewLabel = new JLabel("New label");
-		lblNewLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-		dateContent1.add(lblNewLabel);
-
-		dateContent2 = new JPanel();
-		dateContent2.setOpaque(false);
-		dateContent2.setMaximumSize(new Dimension(32767, 40));
-		flowLayout_2 = (FlowLayout) dateContent2.getLayout();
-		flowLayout_2.setAlignment(FlowLayout.LEFT);
-		dateContentPanelContainer.add(dateContent2);
-
-		lblNewLabel_1 = new JLabel("New label");
-		lblNewLabel_1.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-		dateContent2.add(lblNewLabel_1);
-
-		dateContent3 = new JPanel();
-		dateContent3.setOpaque(false);
-		dateContent3.setMaximumSize(new Dimension(32767, 40));
-		flowLayout_3 = (FlowLayout) dateContent3.getLayout();
-		flowLayout_3.setAlignment(FlowLayout.LEFT);
-		dateContentPanelContainer.add(dateContent3);
-
-		lblNewLabel_2 = new JLabel("New label");
-		lblNewLabel_2.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-		dateContent3.add(lblNewLabel_2);
-
-		dateContent4 = new JPanel();
-		dateContent4.setOpaque(false);
-		dateContent4.setMaximumSize(new Dimension(32767, 40));
-		flowLayout_4 = (FlowLayout) dateContent4.getLayout();
-		flowLayout_4.setAlignment(FlowLayout.LEFT);
-		dateContentPanelContainer.add(dateContent4);
-
-		lblNewLabel_3 = new JLabel("New label");
-		lblNewLabel_3.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-		dateContent4.add(lblNewLabel_3);
-
 		downerPanel.setBackground(Color.WHITE);
 		mainPanel.add(downerPanel);
 		downerPanel.setLayout(new BoxLayout(downerPanel, BoxLayout.Y_AXIS));
@@ -235,7 +191,6 @@ public class Alba_Substitute extends JFrame {
 		dateSPanel.setOpaque(false);
 		dateSPanel.setBorder(new EmptyBorder(0, 15, 0, 0));
 		downerPanel.add(dateSPanel);
-		// dateSPanel.setLayout(new BoxLayout(dateSPanel, BoxLayout.X_AXIS));
 		fl_dateSPanel = new FlowLayout();
 		fl_dateSPanel.setAlignment(FlowLayout.LEFT);
 		dateSPanel.setLayout(fl_dateSPanel);
@@ -699,6 +654,9 @@ public class Alba_Substitute extends JFrame {
 			}
 		});
 
+		// 일정 데이터를 가져와서 표시하는 메서드 호출
+		loadScheduleData(dateContentPanelContainer);
+
 		if (getTitle().equals("알바 대타 신청 - null")) {
 			dispose();
 		}
@@ -747,6 +705,49 @@ public class Alba_Substitute extends JFrame {
 			if (connection != null) {
 				dbConnectionMgr.freeConnection(connection, statement);
 			}
+		}
+	}
+
+	private void loadScheduleData(JPanel datePanel) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = dbConnectionMgr.getConnection();
+			String query = "SELECT schedule_contents, DATE_FORMAT(schedule_start, '%m-%d') AS schedule_start, DATE_FORMAT(schedule_end, '%m-%d') AS schedule_end FROM SCHEDULE"; // 전체
+																																													// 데이터를
+																																													// 가져옴
+			statement = connection.prepareStatement(query);
+			resultSet = statement.executeQuery();
+
+			while (resultSet.next()) {
+				String content = resultSet.getString("schedule_contents");
+				String startDate = resultSet.getString("schedule_start");
+				String endDate = resultSet.getString("schedule_end");
+
+				// 일정 정보를 화면에 추가
+				JLabel scheduleLabel = new JLabel("● " + startDate + " ~ " + endDate + " " + content);
+				scheduleLabel.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+				datePanel.add(scheduleLabel);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (resultSet != null)
+				try {
+					resultSet.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if (statement != null)
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if (connection != null)
+				dbConnectionMgr.freeConnection(connection);
 		}
 	}
 

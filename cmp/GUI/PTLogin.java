@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 //디자인 변경 완
 
 import java.awt.Color;
@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import cmp.DB.*;
+import DB.*;
 
 public class PTLogin implements ActionListener, MouseListener {
 	DBMgr db = new DBMgr();
@@ -38,7 +38,7 @@ public class PTLogin implements ActionListener, MouseListener {
 	JPanel linePanel2 = new DrawLine(); // 줄을 그릴 패널 생성
 	JButton SignInBtn = new RoundedButton("로그인", 32);
 	JButton SignUpBtn = new RoundedButton("회원가입", 32);
-	ImageIcon back_icon = new ImageIcon("./cmp/IMG/back_img.png");
+	ImageIcon back_icon = new ImageIcon("./IMG/back_img.png");
 	JButton backButton = new RoundedButton(back_icon, 30);
 
 	public PTLogin() {

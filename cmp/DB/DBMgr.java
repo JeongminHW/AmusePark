@@ -1,11 +1,11 @@
-package cmp.DB;
+package DB;
 
 import java.sql.*;
 import java.util.*;
 
 import javax.swing.JOptionPane;
 
-import cmp.DB.DBConnectionMgr;
+import DB.DBConnectionMgr;
 
 public class DBMgr {
 	private DBConnectionMgr pool;
@@ -222,7 +222,7 @@ public class DBMgr {
 		}
 		return vacation;
 	}
-	
+
 	// 관리자 휴가 수락
 	public boolean acceptVacation(int num) {
 		boolean flag = false;
@@ -231,7 +231,7 @@ public class DBMgr {
 			sql = "delete from vacation where request_num = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, num);
-			if(pstmt.executeUpdate() == 1) {
+			if (pstmt.executeUpdate() == 1) {
 				flag = true;
 			}
 		} catch (Exception e) {
@@ -251,7 +251,7 @@ public class DBMgr {
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, diff_day);
 			pstmt.setString(2, id);
-			if(pstmt.executeUpdate() == 1)
+			if (pstmt.executeUpdate() == 1)
 				flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -454,22 +454,28 @@ public class DBMgr {
 
 	// 알바 문의사항 리스트 불러오기(알바용)
 	public Vector<InquireBean> selectinquire(String id) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = null;
 		Vector<InquireBean> vlist = new Vector<InquireBean>();
 		try {
 			con = pool.getConnection();
-			sql = "select * from alba_inquire where inquire_id = ?";
+			sql = "select * from alba_inquire where inquire_id=?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, id);
+
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
-				if (rs.getString(5) == null) {
-					InquireBean bean = new InquireBean();
-					bean.setInquire_num(rs.getInt(1));
-					bean.setInquire_id(rs.getString(2));
-					bean.setInquire_title(rs.getString(3));
-					bean.setInquire_contents(rs.getString(4));
-					vlist.addElement(bean);
-				}
+
+				InquireBean bean = new InquireBean();
+				bean.setInquire_num(rs.getInt(1));
+				bean.setInquire_id(rs.getString(2));
+				bean.setInquire_title(rs.getString(3));
+				bean.setInquire_contents(rs.getString(4));
+				bean.setReply_contents(rs.getString(5));
+				vlist.addElement(bean);
+
 			}
 
 		} catch (Exception e) {
@@ -555,7 +561,7 @@ public class DBMgr {
 			sql = "SELECT schedule_contents, DATE_FORMAT(schedule_start, '%m-%d') AS schedule_start, DATE_FORMAT(schedule_end, '%m-%d') AS schedule_end FROM SCHEDULE";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				ScheduleBean bean = new ScheduleBean();
 				bean.setScheduel_contents(rs.getString(1));
 				bean.setSchedule_start(rs.getString(2));
@@ -569,7 +575,7 @@ public class DBMgr {
 		}
 		return vlist;
 	}
-	
+
 	// 투두리스트 가져오기
 	public Vector<TodoBean> selectTodo(String id) {
 		Vector<TodoBean> vlist = new Vector<TodoBean>();

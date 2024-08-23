@@ -1,4 +1,4 @@
-package cmp.DB;
+package DB;
 
 public class ScheduleBean {
 	private int schedule_num;

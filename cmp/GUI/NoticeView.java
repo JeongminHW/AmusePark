@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,7 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import cmp.DB.*;
+import DB.*;
 
 public class NoticeView extends JFrame implements ActionListener{
 	static String id;

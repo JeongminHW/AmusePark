@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -7,8 +7,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.border.EmptyBorder;
-
-import com.teamdev.jxbrowser.dom.event.MouseEvent;
 
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
@@ -44,13 +42,13 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import java.awt.event.MouseAdapter;
 
-import cmp.DB.*;
-import cmp.GUI.*;
+import DB.*;
+import GUI.*;
 
 public class EmployeeMain extends JFrame implements ActionListener {
 	private static EmployeeMain instance;
 	private static String id;
-
+	MyPage mypage;
 	public static String getId() {
 		return id;
 	}
@@ -93,12 +91,12 @@ public class EmployeeMain extends JFrame implements ActionListener {
 	JPanel newPanel;
 	JLabel newJLabel;
 
-	ImageIcon vacation_icon = new ImageIcon("./cmp/IMG/vacation_img.png");
-	ImageIcon date_icon = new ImageIcon("./cmp/IMG/schedule_img.png");
-	ImageIcon mypage_icon = new ImageIcon("./cmp/IMG/user_img.png");
-	ImageIcon todo_icon = new ImageIcon("./cmp/IMG/todo_img.png");
-	ImageIcon ask_icon = new ImageIcon("./cmp/IMG/question_img.png");
-	ImageIcon chat_icon = new ImageIcon("./cmp/IMG/chat_img.png");
+	ImageIcon vacation_icon = new ImageIcon("./IMG/vacation_img.png");
+	ImageIcon date_icon = new ImageIcon("./IMG/schedule_img.png");
+	ImageIcon mypage_icon = new ImageIcon("./IMG/user_img.png");
+	ImageIcon todo_icon = new ImageIcon("./IMG/todo_img.png");
+	ImageIcon ask_icon = new ImageIcon("./IMG/question_img.png");
+	ImageIcon chat_icon = new ImageIcon("./IMG/chat_img.png");
 	JButton vacationButton = new RoundedButton(vacation_icon, 20);
 	JButton dateButton = new RoundedButton(date_icon, 20);
 	JButton myPageButton = new RoundedButton(mypage_icon, 20);
@@ -597,13 +595,12 @@ public class EmployeeMain extends JFrame implements ActionListener {
 				new NoticeView();
 			}
 		} else if (obj == myPageButton) {
-			MyPage mypage = new MyPage();
+			mypage= new MyPage();
 			mypage.setEm_id(id);
 			new MyPage();
 		} else if (obj == QAButton) {
 			if(db.CheckManagerEmployee(id)) {
 				QACheck qa = new QACheck(id);
-				dispose();
 			}
 			else {
 				JOptionPane.showMessageDialog(null, "권한이 없습니다.", "문의사항", JOptionPane.ERROR_MESSAGE);
@@ -617,6 +614,7 @@ public class EmployeeMain extends JFrame implements ActionListener {
 		else if(obj == logOut) {
 			dispose();
 			new EmLogin();
+			mypage.setEm_id("");
 		}
 	}
 

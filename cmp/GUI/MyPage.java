@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,10 +8,7 @@ import java.awt.event.ItemListener;
 import java.util.Vector;
 
 import javax.swing.*;
-
-import org.xnio.channels.SslChannel;
-
-import cmp.DB.*;
+import DB.*;
 
 public class MyPage implements ActionListener {
 	static String em_id = "";
@@ -140,6 +137,13 @@ public class MyPage implements ActionListener {
 		nameField.setText(Embean.getName());
 		phoneField.setText(Embean.getPhone());
 		positionField.setText(Embean.getPosition());
+		db.CheckManagerEmployee(id);
+		if(db.CheckManagerEmployee(id)) {
+			adminCheckBox.setSelected(true);
+		}
+		else {
+			adminCheckBox.setSelected(false);
+		}
 	}
 
 	// 알바 정보 불러오기

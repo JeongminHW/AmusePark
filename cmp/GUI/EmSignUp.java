@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +13,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
 
-import cmp.DB.*;
+import DB.*;
 
 public class EmSignUp implements ActionListener, MouseListener {
 	DBMgr db = new DBMgr();

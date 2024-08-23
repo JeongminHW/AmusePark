@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,7 +39,7 @@ import java.awt.Component;
 import java.awt.ComponentOrientation;
 import javax.swing.DefaultComboBoxModel;
 
-import cmp.DB.*;
+import DB.*;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.EventQueue;
 
@@ -23,7 +23,7 @@ import java.awt.Dimension;
 import javax.swing.AbstractListModel;
 import java.awt.FlowLayout;
 
-import cmp.DB.*;
+import DB.*;
 
 public class chatRoom extends JFrame {
 

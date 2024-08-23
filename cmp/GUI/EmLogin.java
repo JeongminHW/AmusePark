@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -22,10 +22,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import cmp.DB.*;
+import DB.*;
 
 public class EmLogin implements ActionListener, MouseListener {
 	DBMgr db = new DBMgr();
+	EmployeeMain EmMain;
 
 	JFrame frame = new JFrame("직원 로그인/회원가입");
 	JPanel mainPanel = new JPanel();
@@ -38,7 +39,7 @@ public class EmLogin implements ActionListener, MouseListener {
 	JPasswordField PwField = new JPasswordField("Password");
 	JButton SignInBtn = new RoundedButton("로그인", 32);
 	JButton SignUpBtn = new RoundedButton("회원가입", 32);
-	ImageIcon back_icon = new ImageIcon("./cmp/IMG/back_img.png");
+	ImageIcon back_icon = new ImageIcon("./IMG/back_img.png");
 	JButton backButton = new RoundedButton(back_icon, 30);
 
 	public EmLogin() {
@@ -144,7 +145,7 @@ public class EmLogin implements ActionListener, MouseListener {
 			String pw = new String(PwField.getPassword());
 			if (db.LoginCheckEmployee(id, pw)) {
 				System.out.println("로그인 성공");
-				EmployeeMain EmMain = new EmployeeMain();
+				
 				EmMain.setId(id);
 				new EmployeeMain();
 				frame.dispose();

@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,7 +29,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.Component;
 
-import cmp.DB.*;
+import DB.*;
 
 public class chatCreate extends JFrame {
 
@@ -64,7 +64,7 @@ public class chatCreate extends JFrame {
 	public chatCreate(String id) {
 		this.id = id;
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 500);
 		mainPanel = new JPanel();
 		mainPanel.setBackground(Color.WHITE);

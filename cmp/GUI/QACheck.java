@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.EventQueue;
 
@@ -23,18 +23,18 @@ import javax.swing.JButton;
 import java.awt.Cursor;
 import javax.swing.BorderFactory;
 import javax.swing.SwingConstants;
-import cmp.DB.*;
+import DB.*;
 
 public class QACheck extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel mainPanel;
-	String id;
+	static String id;
 	JButton cancleButton;
 	DBMgr db = new DBMgr();
 	Vector<InquireBean> vlist;
 	reviewForm rf;
-	ImageIcon back_icon = new ImageIcon("./cmp/IMG/back_img.png");
+	ImageIcon back_icon = new ImageIcon("./IMG/back_img.png");
 	JButton backButton = new RoundedButton(back_icon, 30);
 
 	/**
@@ -134,6 +134,14 @@ public class QACheck extends JFrame {
 				createQAPanel(contentPanel, bean);
 			}
 		}
+
+		// 이벤트
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
 		
 		if(getTitle().equals("문의사항 검토 - null")) {
 			dispose();
@@ -186,14 +194,6 @@ public class QACheck extends JFrame {
 		contentAnswerLinePanel.setOpaque(false);
 		contentAnswerLinePanel.setMaximumSize(new Dimension(32767, 5));
 		contentAnswerContainerPanel.add(contentAnswerLinePanel);
-		
-		// 이벤트
-		backButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
 
 		answerButton.addActionListener(new ActionListener() {
 			InquireBean bean2 = bean;
@@ -205,8 +205,7 @@ public class QACheck extends JFrame {
 				bean.setInquire_title(bean.getInquire_title());
 				bean.setInquire_contents(bean.getInquire_contents());
 
-				QACheck frame = new QACheck("qwer111");
-				rf = new reviewForm(bean, frame);
+				rf = new reviewForm(bean, new QACheck(id));
 				dispose();
 			}
 		});
@@ -219,7 +218,7 @@ public class QACheck extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					QACheck frame = new QACheck("qwer111");
+					QACheck frame = new QACheck(id);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

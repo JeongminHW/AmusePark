@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 import javax.swing.*;
 
-import cmp.DB.*;
+import DB.*;
 
 public class ToDoList implements ActionListener {
 	static String em_id = "";
@@ -76,18 +76,7 @@ public class ToDoList implements ActionListener {
 			newTodo.setText("");
 			newTodo.requestFocus();
 			refreshList();
-		} else if (!alba_id.equals("")) {
-			vlist = db.selectTodo(alba_id);
-			TodoBean bean = new TodoBean();
-			bean.setWriter_id(alba_id);
-			bean.setTodo_contents(newTodo.getText());
-			if (db.insertTodo(bean)) {
-				System.out.println("성공");
-			}
-			newTodo.setText("");
-			newTodo.requestFocus();
-			refreshList();
-		}
+		} 
 
 	}
 

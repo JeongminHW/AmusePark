@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.border.EmptyBorder;
 
-import org.xnio.channels.SslChannel;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -25,7 +24,7 @@ import java.time.temporal.ChronoUnit;
 import java.awt.FlowLayout;
 import java.awt.Dimension;
 import javax.swing.JButton;
-import cmp.DB.*;
+import DB.*;
 import java.util.*;
 
 public class VacationConfirm extends JFrame implements ActionListener {
@@ -116,6 +115,8 @@ public class VacationConfirm extends JFrame implements ActionListener {
 		ReasonLabel.setFont(new Font("맑은 고딕", Font.BOLD, 12));
 		contentSubtitlePanel.add(ReasonLabel);
 
+		backButton.addActionListener(this);
+
 		mainForm();
 		
 	}
@@ -165,7 +166,6 @@ public class VacationConfirm extends JFrame implements ActionListener {
 			// contentPanel에 rowPanel 추가
 			contentPanel.add(rowPanel);
 			
-			backButton.addActionListener(this);
 			cancelButton.addActionListener(this);
 			confirmButton.addActionListener(this);
 		}
@@ -288,7 +288,6 @@ public class VacationConfirm extends JFrame implements ActionListener {
 			public void run() {
 				try {
 					VacationConfirm frame = new VacationConfirm();
-					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

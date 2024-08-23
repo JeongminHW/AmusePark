@@ -1,4 +1,4 @@
-package cmp.GUI;
+package GUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +13,7 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-import cmp.DB.*;
+import DB.*;
 
 public class CalendarPanel extends JPanel {
 
